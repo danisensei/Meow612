@@ -1,0 +1,217 @@
+.product-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-accent), var(--shadow-card);
+  background: var(--bg-card-hover);
+}
+
+/* Badge */
+.product-card__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 100px;
+}
+
+.product-card__badge--best-seller {
+  background: var(--accent-primary);
+  color: #0a0a0f;
+}
+
+.product-card__badge--new {
+  background: #4fc3f7;
+  color: #0a0a0f;
+}
+
+.product-card__badge--sale {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+/* Image area */
+.product-card__img {
+  position: relative;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.product-card__emoji {
+  font-size: 72px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
+}
+
+.product-card:hover .product-card__emoji {
+  transform: scale(1.1) translateY(-4px);
+}
+
+.product-card__img-glow {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 20px;
+  background: rgba(0,0,0,0.4);
+  filter: blur(12px);
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.product-card:hover .product-card__img-glow {
+  width: 100px;
+  opacity: 0.7;
+}
+
+/* Body */
+.product-card__body {
+  padding: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-card__category {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+}
+
+.product-card__name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.product-card__desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Rating */
+.product-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: #f4b400;
+}
+
+.rating-num {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.rating-count {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Features */
+.product-card__features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.product-card__features li {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.feature-dot {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Footer */
+.product-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+  gap: 12px;
+}
+
+.product-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.price-current {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent-primary);
+}
+
+.price-original {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+/* Add to cart button */
+.product-card__btn {
+  background: var(--accent-glow);
+  border: 1.5px solid var(--border-accent);
+  color: var(--accent-primary);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+
+.product-card__btn:hover {
+  background: var(--accent-primary);
+  color: #0a0a0f;
+  transform: translateY(-1px);
+}
+
+.product-card__btn--added {
+  background: var(--accent-primary) !important;
+  color: #0a0a0f !important;
+  border-color: var(--accent-primary) !important;
+}
