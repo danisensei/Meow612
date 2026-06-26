@@ -9,7 +9,7 @@
 }
 
 .navbar--scrolled {
-  background: rgba(10, 10, 15, 0.85);
+  background: rgba(10, 9, 8, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-subtle);
@@ -34,7 +34,7 @@
 
 .navbar__logo-icon {
   font-size: 22px;
-  filter: drop-shadow(0 0 8px rgba(200, 245, 66, 0.6));
+  filter: drop-shadow(0 0 8px rgba(200, 168, 75, 0.6));
 }
 
 .navbar__logo-text {

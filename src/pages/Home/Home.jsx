@@ -1,9 +1,8 @@
-import { Link } from 'react-router-dom'
-import { products } from '../data/products'
-import ProductCard from '../components/ProductCard'
+import { useProducts } from '@/hooks/useProducts'
+import ProductCard from '@/components/ProductCard/ProductCard'
 import './Home.css'
 
-const featuredProducts = products.filter(p => [1, 5, 6, 7].includes(p.id))
+const FEATURED_IDS = [1, 5, 6, 7]
 
 const stats = [
   { value: '10K+', label: 'Happy Athletes' },
@@ -60,6 +59,9 @@ const testimonials = [
 ]
 
 export default function Home() {
+  const { products, loading, error } = useProducts()
+  const featuredProducts = products.filter(p => FEATURED_IDS.includes(p.id))
+
   return (
     <main className="home">
       {/* Hero */}
@@ -78,12 +80,9 @@ export default function Home() {
               Premium calisthenics equipment and apparel for athletes who refuse to settle. Built by athletes, for athletes.
             </p>
             <div className="hero__ctas">
-              <Link to="/shop" className="btn-primary" id="hero-shop-btn">
-                Shop Now →
-              </Link>
-              <Link to="/about" className="btn-outline" id="hero-about-btn">
-                Our Story
-              </Link>
+              <a href="#featured" className="btn-primary" id="hero-shop-btn">
+                View Gear ↓
+              </a>
             </div>
 
             <div className="hero__stats">
@@ -133,7 +132,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="featured-section">
+      <section className="featured-section" id="featured">
         <div className="container">
           <div className="featured-header">
             <div>
@@ -141,13 +140,25 @@ export default function Home() {
               <h2 className="section-title">Top <span>Picks</span></h2>
               <p className="section-subtitle">The gear our athletes can't live without. Bestsellers that speak for themselves.</p>
             </div>
-            <Link to="/shop" className="btn-outline" id="view-all-btn">View All →</Link>
+            <a href="#featured" className="btn-outline" id="view-all-btn">View All ↓</a>
           </div>
-          <div className="products-grid">
-            {featuredProducts.map(p => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          {loading && (
+            <div className="products-grid">
+              {FEATURED_IDS.map(i => (
+                <div key={i} className="product-skeleton" />
+              ))}
+            </div>
+          )}
+          {error && (
+            <p className="db-error">⚠️ Could not load products. Check your Supabase credentials.</p>
+          )}
+          {!loading && !error && (
+            <div className="products-grid">
+              {featuredProducts.map(p => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -159,7 +170,7 @@ export default function Home() {
             <div className="cta-banner__tag">⚡ Limited Time</div>
             <h2 className="cta-banner__title">Level Up Your <span>Training</span></h2>
             <p className="cta-banner__sub">Get 15% off your first order with code <strong>BEAST15</strong></p>
-            <Link to="/shop" className="btn-primary" id="cta-shop-btn">Shop the Collection</Link>
+            <a href="#featured" className="btn-primary" id="cta-shop-btn">Browse the Collection</a>
           </div>
         </div>
       </section>
@@ -196,18 +207,6 @@ export default function Home() {
             <div className="footer__brand">
               <p className="footer__logo">⚡ MEOW612</p>
               <p className="footer__tagline">Train hard. Stay consistent. Level up.</p>
-            </div>
-            <div className="footer__links-group">
-              <p className="footer__group-title">Shop</p>
-              <Link to="/shop">Parallets</Link>
-              <Link to="/shop">Apparel</Link>
-              <Link to="/shop">Accessories</Link>
-            </div>
-            <div className="footer__links-group">
-              <p className="footer__group-title">Company</p>
-              <Link to="/about">About Us</Link>
-              <a href="#">Blog</a>
-              <a href="#">Contact</a>
             </div>
             <div className="footer__links-group">
               <p className="footer__group-title">Support</p>

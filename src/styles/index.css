@@ -7,22 +7,24 @@
 }
 
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-card: #16161f;
-  --bg-card-hover: #1e1e2a;
-  --accent-primary: #c8f542;
-  --accent-secondary: #a8d62e;
-  --accent-glow: rgba(200, 245, 66, 0.15);
-  --accent-glow-strong: rgba(200, 245, 66, 0.3);
-  --text-primary: #f0f0f5;
-  --text-secondary: #9898b0;
-  --text-muted: #5a5a72;
-  --border-subtle: rgba(255,255,255,0.07);
-  --border-accent: rgba(200, 245, 66, 0.3);
-  --gradient-hero: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #0f1a0a 100%);
-  --shadow-card: 0 8px 32px rgba(0,0,0,0.4);
-  --shadow-accent: 0 0 40px rgba(200, 245, 66, 0.15);
+  /* Parallettes-inspired palette — matte iron black, antique brass gold, natural wood */
+  --bg-primary: #0a0908;           /* deep matte iron black */
+  --bg-secondary: #111009;         /* slightly lifted iron surface */
+  --bg-card: #19160f;              /* warm dark card surface */
+  --bg-card-hover: #221e15;        /* card hover — warm charcoal */
+  --accent-primary: #b8922a;       /* antique brass / engraved gold */
+  --accent-secondary: #cfa94e;     /* lighter polished brass */
+  --accent-glow: rgba(184, 146, 42, 0.14);
+  --accent-glow-strong: rgba(184, 146, 42, 0.28);
+  --accent-red: #c0392b;           /* Hello Kitty bow red accent */
+  --text-primary: #e8d9bf;         /* warm cream — like the wood grain highlight */
+  --text-secondary: #967d58;       /* mid-tone wood brown */
+  --text-muted: #4e4030;           /* dark shadowed wood */
+  --border-subtle: rgba(184, 146, 42, 0.07);
+  --border-accent: rgba(184, 146, 42, 0.28);
+  --gradient-hero: linear-gradient(135deg, #0a0908 0%, #111009 50%, #18140c 100%);
+  --shadow-card: 0 8px 40px rgba(0,0,0,0.7);
+  --shadow-accent: 0 0 48px rgba(184, 146, 42, 0.14);
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
@@ -30,6 +32,10 @@
   --font-display: 'Bebas Neue', sans-serif;
   --font-body: 'Outfit', sans-serif;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Natural wood handle tones */
+  --wood-light: #c9a87e;
+  --wood-mid: #a07a4a;
+  --wood-dark: #6e4f28;
 }
 
 html {
@@ -102,7 +108,7 @@ img {
   background: var(--accent-secondary);
   border-color: var(--accent-secondary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(200, 245, 66, 0.3);
+  box-shadow: 0 8px 24px rgba(184, 146, 42, 0.38);
 }
 
 .btn-outline {
@@ -123,7 +129,7 @@ img {
 .btn-outline:hover {
   background: var(--accent-glow);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(200, 245, 66, 0.2);
+  box-shadow: 0 8px 24px rgba(184, 146, 42, 0.22);
 }
 
 .section-label {
@@ -191,8 +197,8 @@ img {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(200, 245, 66, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(200, 245, 66, 0.4); }
+  0%, 100% { box-shadow: 0 0 20px rgba(184, 146, 42, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(184, 146, 42, 0.45); }
 }
 
 @keyframes float {
@@ -241,7 +247,7 @@ img {
 /* Badge */
 .badge {
   background: var(--accent-primary);
-  color: #0a0a0f;
+  color: #0d0c0b;
   font-size: 10px;
   font-weight: 800;
   padding: 2px 7px;

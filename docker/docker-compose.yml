@@ -1,0 +1,12 @@
+services:
+  meow612:
+    build:
+      context: ..          # project root is one level up from docker/
+      dockerfile: docker/Dockerfile
+      args:
+        - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    container_name: meow612-app
+    ports:
+      - "8080:80"
+    restart: unless-stopped

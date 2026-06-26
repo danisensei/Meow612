@@ -27,8 +27,6 @@ export default function Navbar({ cartCount, onCartOpen }) {
 
         <ul className={`navbar__links ${menuOpen ? 'navbar__links--open' : ''}`}>
           <li><NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
-          <li><NavLink to="/shop" className={({ isActive }) => isActive ? 'active' : ''}>Shop</NavLink></li>
-          <li><NavLink to="/about" className={({ isActive }) => isActive ? 'active' : ''}>About</NavLink></li>
         </ul>
 
         <div className="navbar__actions">

@@ -1,12 +1,10 @@
 import { useState, createContext, useContext } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
-import CartSidebar from './components/CartSidebar'
-import Home from './pages/Home'
-import Shop from './pages/Shop'
-import About from './pages/About'
-import Toast from './components/Toast'
-import './index.css'
+import Navbar from '@/components/Navbar/Navbar'
+import CartSidebar from '@/components/CartSidebar/CartSidebar'
+import Home from '@/pages/Home/Home'
+import Toast from '@/components/Toast/Toast'
+import '@/styles/index.css'
 
 export const CartContext = createContext(null)
 
@@ -55,8 +53,7 @@ function App() {
         <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/about" element={<About />} />
+          <Route path="*" element={<Home />} />
         </Routes>
         {toast && <Toast msg={toast.msg} icon={toast.icon} />}
       </Router>

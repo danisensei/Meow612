@@ -1,4 +1,4 @@
-import { useCart } from '../App'
+import { useCart } from '@/App'
 import './CartSidebar.css'
 
 export default function CartSidebar({ open, onClose }) {

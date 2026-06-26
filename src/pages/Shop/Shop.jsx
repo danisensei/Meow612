@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import { products, categories } from '../data/products'
-import ProductCard from '../components/ProductCard'
+import { useProducts } from '@/hooks/useProducts'
+import ProductCard from '@/components/ProductCard/ProductCard'
 import './Shop.css'
 
 const sortOptions = [
@@ -11,6 +11,7 @@ const sortOptions = [
 ]
 
 export default function Shop() {
+  const { products, categories, loading, error } = useProducts()
   const [activeCategory, setActiveCategory] = useState('all')
   const [sort, setSort] = useState('default')
   const [search, setSearch] = useState('')
@@ -94,27 +95,45 @@ export default function Shop() {
         </div>
 
         {/* Results count */}
-        <p className="shop-results-count">
-          Showing <strong>{filtered.length}</strong> {filtered.length === 1 ? 'product' : 'products'}
-          {activeCategory !== 'all' && ` in ${activeCategory}`}
-        </p>
+        {!loading && !error && (
+          <p className="shop-results-count">
+            Showing <strong>{filtered.length}</strong> {filtered.length === 1 ? 'product' : 'products'}
+            {activeCategory !== 'all' && ` in ${activeCategory}`}
+          </p>
+        )}
 
-        {/* Grid */}
-        {filtered.length > 0 ? (
+        {/* Loading skeletons */}
+        {loading && (
           <div className="shop-grid">
-            {filtered.map(p => (
-              <ProductCard key={p.id} product={p} />
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="product-skeleton" />
             ))}
           </div>
-        ) : (
-          <div className="shop-empty">
-            <div className="shop-empty__icon">🔍</div>
-            <h3>No products found</h3>
-            <p>Try a different search term or category.</p>
-            <button className="btn-outline" onClick={() => { setSearch(''); setActiveCategory('all') }}>
-              Clear Filters
-            </button>
-          </div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <p className="db-error">⚠️ Could not load products. Check your Supabase credentials.</p>
+        )}
+
+        {/* Grid */}
+        {!loading && !error && (
+          filtered.length > 0 ? (
+            <div className="shop-grid">
+              {filtered.map(p => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          ) : (
+            <div className="shop-empty">
+              <div className="shop-empty__icon">🔍</div>
+              <h3>No products found</h3>
+              <p>Try a different search term or category.</p>
+              <button className="btn-outline" onClick={() => { setSearch(''); setActiveCategory('all') }}>
+                Clear Filters
+              </button>
+            </div>
+          )
         )}
       </div>
     </main>

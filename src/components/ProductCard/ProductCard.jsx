@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useCart } from '../App'
+import { useCart } from '@/App'
 import './ProductCard.css'
 
 export default function ProductCard({ product }) {
