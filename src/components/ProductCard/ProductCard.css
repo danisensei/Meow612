@@ -31,8 +31,8 @@
 }
 
 .product-card__badge--best-seller {
-  background: var(--accent-primary);
-  color: #0a0a0f;
+  background: var(--accent-gradient);
+  color: #fff;
 }
 
 .product-card__badge--new {
@@ -125,7 +125,7 @@
   align-items: center;
   gap: 5px;
   font-size: 13px;
-  color: #f4b400;
+  color: #a259ff;
 }
 
 .rating-num {
@@ -212,6 +212,6 @@
 
 .product-card__btn--added {
   background: var(--accent-primary) !important;
-  color: #0a0a0f !important;
+  color: #fff !important;
   border-color: var(--accent-primary) !important;
 }

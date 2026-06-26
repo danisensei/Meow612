@@ -21,7 +21,7 @@ export default function Navbar({ cartCount, onCartOpen }) {
     <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
       <div className="navbar__inner container">
         <Link to="/" className="navbar__logo">
-          <span className="navbar__logo-icon">⚡</span>
+          <img src="/favicon.png" alt="Meow612 cat" className="navbar__logo-icon" />
           <span className="navbar__logo-text">MEOW<span>612</span></span>
         </Link>
 

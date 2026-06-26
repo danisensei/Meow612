@@ -9,13 +9,13 @@
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--border-subtle);
-  background: linear-gradient(180deg, rgba(200,245,66,0.04) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(79,140,255,0.06) 0%, transparent 100%);
 }
 
 .shop-hero__orb {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(200,245,66,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79,140,255,0.11) 0%, rgba(162,89,255,0.06) 50%, transparent 70%);
   top: 0;
   right: 10%;
 }
@@ -65,9 +65,9 @@
 }
 
 .filter-btn--active {
-  background: var(--accent-primary) !important;
+  background: var(--accent-gradient) !important;
   border-color: var(--accent-primary) !important;
-  color: #0a0a0f !important;
+  color: #fff !important;
   font-weight: 700;
 }
 

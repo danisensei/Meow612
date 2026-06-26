@@ -33,8 +33,11 @@
 }
 
 .navbar__logo-icon {
-  font-size: 22px;
-  filter: drop-shadow(0 0 8px rgba(200, 168, 75, 0.6));
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 6px;
+  filter: drop-shadow(0 0 8px rgba(79, 140, 255, 0.7));
 }
 
 .navbar__logo-text {

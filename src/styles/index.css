@@ -7,24 +7,25 @@
 }
 
 :root {
-  /* Parallettes-inspired palette — matte iron black, antique brass gold, natural wood */
-  --bg-primary: #0a0908;           /* deep matte iron black */
-  --bg-secondary: #111009;         /* slightly lifted iron surface */
-  --bg-card: #19160f;              /* warm dark card surface */
-  --bg-card-hover: #221e15;        /* card hover — warm charcoal */
-  --accent-primary: #b8922a;       /* antique brass / engraved gold */
-  --accent-secondary: #cfa94e;     /* lighter polished brass */
-  --accent-glow: rgba(184, 146, 42, 0.14);
-  --accent-glow-strong: rgba(184, 146, 42, 0.28);
-  --accent-red: #c0392b;           /* Hello Kitty bow red accent */
-  --text-primary: #e8d9bf;         /* warm cream — like the wood grain highlight */
-  --text-secondary: #967d58;       /* mid-tone wood brown */
-  --text-muted: #4e4030;           /* dark shadowed wood */
-  --border-subtle: rgba(184, 146, 42, 0.07);
-  --border-accent: rgba(184, 146, 42, 0.28);
-  --gradient-hero: linear-gradient(135deg, #0a0908 0%, #111009 50%, #18140c 100%);
+  /* Meow612 icon palette — deep black, electric blue, vivid violet */
+  --bg-primary: #0a0a0f;           /* deep near-black */
+  --bg-secondary: #0f0f18;         /* slightly lifted dark surface */
+  --bg-card: #141420;              /* dark card surface */
+  --bg-card-hover: #1a1a2e;        /* card hover — deep navy */
+  --accent-primary: #4f8cff;       /* electric blue */
+  --accent-secondary: #a259ff;     /* vivid violet */
+  --accent-glow: rgba(79, 140, 255, 0.12);
+  --accent-glow-strong: rgba(79, 140, 255, 0.25);
+  --accent-gradient: linear-gradient(135deg, #4f8cff 0%, #a259ff 100%);
+  --accent-red: #ff5a8a;           /* neon pink accent */
+  --text-primary: #e8e8f5;         /* cool lavender-white */
+  --text-secondary: #7b7b9e;       /* mid-tone muted lavender */
+  --text-muted: #3a3a55;           /* dark muted violet */
+  --border-subtle: rgba(79, 140, 255, 0.08);
+  --border-accent: rgba(79, 140, 255, 0.28);
+  --gradient-hero: linear-gradient(135deg, #0a0a0f 0%, #0f0f18 50%, #12101e 100%);
   --shadow-card: 0 8px 40px rgba(0,0,0,0.7);
-  --shadow-accent: 0 0 48px rgba(184, 146, 42, 0.14);
+  --shadow-accent: 0 0 48px rgba(79, 140, 255, 0.15);
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
@@ -32,10 +33,10 @@
   --font-display: 'Bebas Neue', sans-serif;
   --font-body: 'Outfit', sans-serif;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  /* Natural wood handle tones */
-  --wood-light: #c9a87e;
-  --wood-mid: #a07a4a;
-  --wood-dark: #6e4f28;
+  /* Blue-violet spectrum tones */
+  --violet-light: #c084fc;
+  --violet-mid: #a259ff;
+  --violet-dark: #6d28d9;
 }
 
 html {
@@ -93,22 +94,22 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--accent-primary);
-  color: #0a0a0f;
+  background: var(--accent-gradient);
+  color: #fff;
   padding: 14px 28px;
   border-radius: var(--radius-sm);
   font-weight: 700;
   font-size: 15px;
   letter-spacing: 0.5px;
   transition: var(--transition);
-  border: 2px solid var(--accent-primary);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .btn-primary:hover {
-  background: var(--accent-secondary);
-  border-color: var(--accent-secondary);
+  opacity: 0.88;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(184, 146, 42, 0.38);
+  box-shadow: 0 8px 24px rgba(162, 89, 255, 0.45);
 }
 
 .btn-outline {
@@ -129,7 +130,7 @@ img {
 .btn-outline:hover {
   background: var(--accent-glow);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(184, 146, 42, 0.22);
+  box-shadow: 0 8px 24px rgba(79, 140, 255, 0.25);
 }
 
 .section-label {
@@ -197,8 +198,8 @@ img {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(184, 146, 42, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(184, 146, 42, 0.45); }
+  0%, 100% { box-shadow: 0 0 20px rgba(79, 140, 255, 0.25); }
+  50% { box-shadow: 0 0 40px rgba(162, 89, 255, 0.5); }
 }
 
 @keyframes float {
@@ -246,8 +247,8 @@ img {
 
 /* Badge */
 .badge {
-  background: var(--accent-primary);
-  color: #0d0c0b;
+  background: var(--accent-gradient);
+  color: #fff;
   font-size: 10px;
   font-weight: 800;
   padding: 2px 7px;

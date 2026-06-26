@@ -15,7 +15,7 @@
 .hero__orb-1 {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(184,146,42,0.11) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79,140,255,0.14) 0%, transparent 70%);
   top: -100px;
   right: -100px;
 }
@@ -23,7 +23,7 @@
 .hero__orb-2 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(184,146,42,0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(162,89,255,0.09) 0%, transparent 70%);
   bottom: 50px;
   left: -100px;
 }
@@ -53,8 +53,12 @@
 }
 
 .hero__title span {
-  color: var(--accent-primary);
-  text-shadow: 0 0 40px rgba(200, 168, 75, 0.35);
+  background: linear-gradient(135deg, #4f8cff 0%, #a259ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px rgba(79, 140, 255, 0.4));
 }
 
 .hero__subtitle {
@@ -293,7 +297,7 @@
 .cta-banner {
   padding: 80px 0;
   position: relative;
-  background: linear-gradient(135deg, rgba(184,146,42,0.05) 0%, rgba(10,9,8,0) 100%);
+  background: linear-gradient(135deg, rgba(79,140,255,0.06) 0%, rgba(162,89,255,0.04) 100%);
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
   overflow: hidden;
@@ -302,7 +306,7 @@
 .cta-banner__orb {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(184,146,42,0.13) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79,140,255,0.15) 0%, rgba(162,89,255,0.08) 50%, transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -390,7 +394,7 @@
 }
 
 .testimonial-stars {
-  color: #f4b400;
+  color: #a259ff;
   font-size: 18px;
   letter-spacing: 2px;
 }
