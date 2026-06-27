@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Navbar from '@/components/Navbar/Navbar'
 import CartSidebar from '@/components/CartSidebar/CartSidebar'
 import Home from '@/pages/Home/Home'
+import Admin from '@/pages/Admin/Admin'
 import Toast from '@/components/Toast/Toast'
 import '@/styles/index.css'
 
@@ -53,6 +54,7 @@ function App() {
         <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/meow-admin" element={<Admin />} />
           <Route path="*" element={<Home />} />
         </Routes>
         {toast && <Toast msg={toast.msg} icon={toast.icon} />}

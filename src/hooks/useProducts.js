@@ -19,6 +19,7 @@ export function useProducts() {
   const [categories, setCategories] = useState(['all'])
   const [loading, setLoading]       = useState(true)
   const [error, setError]           = useState(null)
+  const [refetchTrigger, setRefetchTrigger] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -78,7 +79,54 @@ export function useProducts() {
 
     fetchData()
     return () => { cancelled = true }
-  }, [])
+  }, [refetchTrigger])
 
-  return { products, categories, loading, error }
+  const refetch = () => setRefetchTrigger(prev => prev + 1)
+
+  const addProduct = async (productData) => {
+    if (!supabase) {
+      alert("Supabase not connected. Changes won't persist.")
+      return false
+    }
+    const { error } = await supabase.from('products').insert([productData])
+    if (error) {
+      console.error("Error adding product:", error)
+      alert("Failed to add product. Check Supabase RLS policies.")
+      return false
+    }
+    refetch()
+    return true
+  }
+
+  const removeProduct = async (id) => {
+    if (!supabase) {
+      alert("Supabase not connected. Changes won't persist.")
+      return false
+    }
+    const { error } = await supabase.from('products').delete().eq('id', id)
+    if (error) {
+      console.error("Error removing product:", error)
+      alert("Failed to remove product. Check Supabase RLS policies.")
+      return false
+    }
+    refetch()
+    return true
+  }
+
+  const updateProduct = async (id, updates) => {
+    if (!supabase) {
+      alert("Supabase not connected. Changes won't persist.")
+      return false
+    }
+    const { error } = await supabase.from('products').update(updates).eq('id', id)
+    if (error) {
+      console.error("Error updating product:", error)
+      alert("Failed to update product. Check Supabase RLS policies.")
+      return false
+    }
+    refetch()
+    return true
+  }
+
+  return { products, categories, loading, error, addProduct, removeProduct, updateProduct, refetch }
 }

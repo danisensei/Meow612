@@ -26,7 +26,21 @@ export default function Navbar({ cartCount, onCartOpen }) {
         </Link>
 
         <ul className={`navbar__links ${menuOpen ? 'navbar__links--open' : ''}`}>
-          <li><NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
+          <li>
+            <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>
+              <span className="link-icon">⚡</span> Home
+            </NavLink>
+          </li>
+          <li>
+            <a href="#featured" onClick={() => setMenuOpen(false)}>
+              <span className="link-icon">🏋️</span> Gear
+            </a>
+          </li>
+          <li>
+            <a href="#community" onClick={() => setMenuOpen(false)}>
+              <span className="link-icon">🌐</span> Community
+            </a>
+          </li>
         </ul>
 
         <div className="navbar__actions">
