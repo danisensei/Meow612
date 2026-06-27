@@ -2,8 +2,7 @@ import { useProducts } from '@/hooks/useProducts'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Home.css'
 
-const FEATURED_IDS = [1, 5, 6, 7]
-
+import './Home.css'
 const stats = [
   { value: '10K+', label: 'Happy Athletes' },
   { value: '5★', label: 'Average Rating' },
@@ -60,7 +59,6 @@ const testimonials = [
 
 export default function Home() {
   const { products, loading, error } = useProducts()
-  const featuredProducts = products.filter(p => FEATURED_IDS.includes(p.id))
 
   return (
     <main className="home">
@@ -136,15 +134,15 @@ export default function Home() {
         <div className="container">
           <div className="featured-header">
             <div>
-              <div className="section-label">🏆 Fan Favorites</div>
-              <h2 className="section-title">Top <span>Picks</span></h2>
-              <p className="section-subtitle">The gear our athletes can't live without. Bestsellers that speak for themselves.</p>
+              <div className="section-label">🏆 Full Collection</div>
+              <h2 className="section-title">Our <span>Gear</span></h2>
+              <p className="section-subtitle">Premium equipment for athletes who refuse to settle. Browse our complete collection.</p>
             </div>
             <a href="#featured" className="btn-outline" id="view-all-btn">View All ↓</a>
           </div>
           {loading && (
             <div className="products-grid">
-              {FEATURED_IDS.map(i => (
+              {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="product-skeleton" />
               ))}
             </div>
@@ -154,7 +152,7 @@ export default function Home() {
           )}
           {!loading && !error && (
             <div className="products-grid">
-              {featuredProducts.map(p => (
+              {products.map(p => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>
