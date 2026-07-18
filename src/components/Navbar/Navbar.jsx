@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
@@ -32,12 +32,12 @@ export default function Navbar({ cartCount, onCartOpen }) {
             </NavLink>
           </li>
           <li>
-            <a href="#featured" onClick={() => setMenuOpen(false)}>
-              <span className="link-icon">🏋️</span> Gear
-            </a>
+            <NavLink to="/shop" className={({ isActive }) => isActive ? 'active' : ''}>
+              <span className="link-icon">🏋️</span> Shop
+            </NavLink>
           </li>
           <li>
-            <a href="#community" onClick={() => setMenuOpen(false)}>
+            <a href="/#community" onClick={() => setMenuOpen(false)}>
               <span className="link-icon">🌐</span> Community
             </a>
           </li>

@@ -1,152 +1,130 @@
+import { Link } from 'react-router-dom'
 import { useProducts } from '@/hooks/useProducts'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Home.css'
-
-import './Home.css'
-const stats = [
-  { value: '10K+', label: 'Happy Athletes' },
-  { value: '5★', label: 'Average Rating' },
-  { value: '50+', label: 'Countries Shipped' },
-  { value: '3yr', label: 'Warranty' },
-]
-
-const features = [
-  {
-    icon: '🏗️',
-    title: 'Built to Last',
-    desc: 'Every piece of gear is engineered for years of intense training. No compromises.',
-  },
-  {
-    icon: '🎯',
-    title: 'Athlete-Designed',
-    desc: 'Our products are designed by calisthenics athletes who know exactly what you need.',
-  },
-  {
-    icon: '🚀',
-    title: 'Fast Shipping',
-    desc: 'Get your gear fast with free worldwide shipping on all orders over $50.',
-  },
-  {
-    icon: '🔄',
-    title: '30-Day Returns',
-    desc: 'Not satisfied? Return it hassle-free within 30 days, no questions asked.',
-  },
-]
 
 const testimonials = [
   {
     name: 'Marcus T.',
     handle: '@marcus_trains',
-    text: 'These parallets completely changed my training. The grip, the stability — pure perfection. Worth every penny.',
+    text: 'These parallets completely changed my training. The grip, the stability — pure perfection.',
     rating: 5,
-    avatar: '💪',
+    avatar: 'MT',
   },
   {
     name: 'Sofia K.',
     handle: '@sofiastrength',
     text: 'Finally landed my first planche on these. The height is spot on and they feel incredibly sturdy.',
     rating: 5,
-    avatar: '🤸',
+    avatar: 'SK',
   },
   {
     name: 'James R.',
     handle: '@jamesfit',
     text: "I've tried many brands. Meow612 is in a league of its own. The craftsmanship is unreal.",
     rating: 5,
-    avatar: '🏋️',
+    avatar: 'JR',
   },
 ]
+
+const marqueeItems = ['CALISTHENICS', 'PARALLETS', 'APPAREL', 'ACCESSORIES', 'BUILT DIFFERENT', 'ATHLETE GRADE']
 
 export default function Home() {
   const { products, loading, error } = useProducts()
 
   return (
     <main className="home">
-      {/* Hero */}
+
+      {/* ── HERO ──────────────────────────────────── */}
       <section className="hero">
-        <div className="glow-orb hero__orb-1" />
-        <div className="glow-orb hero__orb-2" />
+        <div className="hero__bg-glow" />
         <div className="container hero__inner">
           <div className="hero__content">
-            <div className="section-label">🔥 Free shipping on orders $50+</div>
-
-            <p className="hero__subtitle">
-              Premium calisthenics equipment and apparel for athletes who refuse to settle. Built by athletes, for athletes.
+            <p className="hero__eyebrow">Premium Calisthenics Equipment</p>
+            <h1 className="hero__title">
+              BUILT<br />
+              <span>FOR THE</span><br />
+              ELITE
+            </h1>
+            <p className="hero__sub">
+              Engineered for athletes who refuse to settle. Every product crafted with precision and purpose.
             </p>
             <div className="hero__ctas">
-              <a href="#featured" className="btn-primary" id="hero-shop-btn">
-                View Gear ↓
-              </a>
-            </div>
-
-            <div className="hero__stats">
-              {stats.map((s, i) => (
-                <div key={i} className="hero__stat">
-                  <span className="hero__stat-value">{s.value}</span>
-                  <span className="hero__stat-label">{s.label}</span>
-                </div>
-              ))}
+              <Link to="/shop" className="btn-primary" id="hero-shop-btn">Shop Gear</Link>
+              <a href="#community" className="btn-outline">See Reviews</a>
             </div>
           </div>
 
-          <div className="hero__visual">
-            <div className="hero__visual-ring hero__visual-ring--outer" />
-            <div className="hero__visual-ring hero__visual-ring--inner" />
-            <div className="hero__visual-card">
-              <div className="hero__visual-emoji">🏋️</div>
-              <div className="hero__visual-parallette">
-                <div className="par-base" />
-                <div className="par-post par-post--l" />
-                <div className="par-post par-post--r" />
-                <div className="par-bar" />
+          <div className="hero__card-wrap">
+            <div className="hero__card">
+              <div className="hero__card-inner">
+                <div className="hero__card-tag">PERFORMANCE GEAR</div>
+                <div className="hero__card-emoji">🏋️</div>
+                <div className="hero__card-parallette">
+                  <div className="par-base" />
+                  <div className="par-post par-post--l" />
+                  <div className="par-post par-post--r" />
+                  <div className="par-bar" />
+                </div>
+                <div className="hero__card-badge">
+                  <span>★ 4.9</span>
+                  <span>10K+ Athletes</span>
+                </div>
               </div>
+            </div>
+            <div className="hero__floating-pill hero__floating-pill--1">
+              <span>⚡</span> Pro Grade
+            </div>
+            <div className="hero__floating-pill hero__floating-pill--2">
+              <span>🌍</span> Ships Worldwide
             </div>
           </div>
         </div>
 
         <div className="hero__scroll-hint">
-          <span>Scroll to explore</span>
-          <div className="scroll-arrow" />
+          <div className="hero__scroll-line" />
+          <span>Scroll</span>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="features-section">
-        <div className="container">
-          <div className="features-grid">
-            {features.map((f, i) => (
-              <div key={i} className="feature-item">
-                <div className="feature-icon">{f.icon}</div>
-                <h3>{f.title}</h3>
-                <p>{f.desc}</p>
-              </div>
-            ))}
-          </div>
+      {/* ── MARQUEE TICKER ────────────────────────── */}
+      <div className="marquee-strip">
+        <div className="marquee-track">
+          {[...marqueeItems, ...marqueeItems].map((item, i) => (
+            <span key={i} className="marquee-item">
+              {item} <span className="marquee-dot">✦</span>
+            </span>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* Featured Products */}
+      {/* ── GEAR SECTION ──────────────────────────── */}
       <section className="featured-section" id="featured">
         <div className="container">
           <div className="featured-header">
             <div>
-              <div className="section-label">🏆 Full Collection</div>
+              <p className="section-label">Collection</p>
               <h2 className="section-title">Our <span>Gear</span></h2>
-              <p className="section-subtitle">Premium equipment for athletes who refuse to settle. Browse our complete collection.</p>
             </div>
-            <a href="#featured" className="btn-outline" id="view-all-btn">View All ↓</a>
+            <Link to="/shop" className="btn-outline" id="view-all-btn">View All</Link>
           </div>
+
           {loading && (
             <div className="products-grid">
-              {Array.from({ length: 8 }).map((_, i) => (
+              {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="product-skeleton" />
               ))}
             </div>
           )}
-          {error && (
-            <p className="db-error">⚠️ Could not load products. Check your Supabase credentials.</p>
+          {error && <p className="db-error">⚠️ Could not load products.</p>}
+          {!loading && !error && products.length === 0 && (
+            <div className="gear-empty">
+              <div className="gear-empty__icon">🔧</div>
+              <h3>New drops coming soon</h3>
+              <p>We're restocking. Check back shortly for the latest gear.</p>
+            </div>
           )}
-          {!loading && !error && (
+          {!loading && !error && products.length > 0 && (
             <div className="products-grid">
               {products.map(p => (
                 <ProductCard key={p.id} product={p} />
@@ -156,25 +134,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Banner */}
-      <section className="cta-banner">
-        <div className="glow-orb cta-banner__orb" />
-        <div className="container">
-          <div className="cta-banner__inner">
-            <div className="cta-banner__tag">⚡ Limited Time</div>
-            <h2 className="cta-banner__title">Level Up Your <span>Training</span></h2>
-            <p className="cta-banner__sub">Get 15% off your first order with code <strong>BEAST15</strong></p>
-            <a href="#featured" className="btn-primary" id="cta-shop-btn">Browse the Collection</a>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
+      {/* ── TESTIMONIALS ──────────────────────────── */}
       <section className="testimonials-section" id="community">
         <div className="container">
-          <div className="section-header-center">
-            <div className="section-label">💬 Real Athletes</div>
-            <h2 className="section-title">What They <span>Say</span></h2>
+          <div className="testimonials-header">
+            <div>
+              <p className="section-label">Community</p>
+              <h2 className="section-title">What They <span>Say</span></h2>
+            </div>
           </div>
           <div className="testimonials-grid">
             {testimonials.map((t, i) => (
@@ -194,31 +161,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ── FOOTER ────────────────────────────────── */}
       <footer className="footer">
-        <div className="container">
-          <div className="footer__inner">
-            <div className="footer__brand">
-              <p className="footer__logo">⚡ MEOW612</p>
-              <p className="footer__tagline">Train hard. Stay consistent. Level up.</p>
-            </div>
-            <div className="footer__links-group">
-              <p className="footer__group-title">Support</p>
-              <a href="#">FAQ</a>
-              <a href="#">Returns</a>
-              <a href="#">Shipping</a>
-            </div>
+        <div className="container footer__inner">
+          <div className="footer__brand">
+            <p className="footer__logo">MEOW612</p>
+            <p className="footer__copy">© 2025 Meow612. All rights reserved.</p>
           </div>
-          <div className="footer__bottom">
-            <p>© 2025 Meow612. All rights reserved.</p>
-            <div className="footer__socials">
-              <a href="#" className="social-btn">📸</a>
-              <a href="#" className="social-btn">🎵</a>
-              <a href="#" className="social-btn">🐦</a>
-            </div>
+          <div className="footer__socials">
+            <a href="#" className="social-btn" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="#" className="social-btn" aria-label="TikTok">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.28 8.28 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+            </a>
+            <a href="#" className="social-btn" aria-label="Twitter">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
           </div>
         </div>
       </footer>
+
     </main>
   )
 }

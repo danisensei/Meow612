@@ -1,139 +1,130 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Shop.css'
 
-const sortOptions = [
-  { value: 'default', label: 'Featured' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Top Rated' },
-]
+const CATEGORY_LABELS = {
+  all: 'All Gear',
+  parallets: 'Parallets',
+  apparel: 'Apparel',
+  accessories: 'Accessories',
+}
 
 export default function Shop() {
-  const { products, categories, loading, error } = useProducts()
+  const { products, categories, loading } = useProducts()
   const [activeCategory, setActiveCategory] = useState('all')
-  const [sort, setSort] = useState('default')
   const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('default')
 
   const filtered = useMemo(() => {
-    let list = [...products]
-
+    let result = [...products]
     if (activeCategory !== 'all') {
-      list = list.filter(p => p.category === activeCategory)
+      result = result.filter(p => p.category === activeCategory)
     }
-
     if (search.trim()) {
       const q = search.toLowerCase()
-      list = list.filter(p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q)
+      )
     }
-
-    switch (sort) {
-      case 'price-asc': return list.sort((a, b) => a.price - b.price)
-      case 'price-desc': return list.sort((a, b) => b.price - a.price)
-      case 'rating': return list.sort((a, b) => b.rating - a.rating)
-      default: return list
-    }
-  }, [activeCategory, sort, search])
+    if (sort === 'price-asc')  result.sort((a, b) => a.price - b.price)
+    if (sort === 'price-desc') result.sort((a, b) => b.price - a.price)
+    if (sort === 'rating')     result.sort((a, b) => b.rating - a.rating)
+    return result
+  }, [products, activeCategory, search, sort])
 
   return (
     <main className="shop-page">
-      {/* Page Header */}
       <div className="shop-hero">
-        <div className="glow-orb shop-hero__orb" />
+        <div className="shop-hero__glow" />
         <div className="container">
-          <div className="shop-hero__content">
-            <div className="section-label">🛒 The Collection</div>
-            <h1 className="section-title">Shop All <span>Gear</span></h1>
-            <p className="section-subtitle">
-              Everything you need to build strength, master skills, and look the part.
-            </p>
-          </div>
+          <p className="section-label">Store</p>
+          <h1 className="shop-hero__title">ALL <span>GEAR</span></h1>
+          <p className="shop-hero__sub">Elite calisthenics equipment, apparel & accessories.</p>
         </div>
       </div>
 
-      <div className="container shop-body">
-        {/* Filters */}
-        <div className="shop-filters">
-          <div className="shop-filters__categories">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                className={`filter-btn ${activeCategory === cat ? 'filter-btn--active' : ''}`}
-                onClick={() => setActiveCategory(cat)}
-                id={`filter-${cat}`}
-              >
-                {cat === 'all' ? 'All Products' : cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <div className="shop-filters__right">
-            <div className="search-box">
-              <span className="search-icon">🔍</span>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="search-input"
-                id="search-input"
-              />
-            </div>
-
-            <select
-              className="sort-select"
-              value={sort}
-              onChange={e => setSort(e.target.value)}
-              id="sort-select"
-            >
-              {sortOptions.map(o => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-          </div>
+      <div className="container shop-controls">
+        {/* Search */}
+        <div className="shop-search-wrap">
+          <span className="shop-search-icon">🔍</span>
+          <input
+            type="text"
+            className="shop-search"
+            placeholder="Search gear..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            id="shop-search"
+          />
+          {search && (
+            <button className="shop-search-clear" onClick={() => setSearch('')}>✕</button>
+          )}
         </div>
 
-        {/* Results count */}
-        {!loading && !error && (
-          <p className="shop-results-count">
-            Showing <strong>{filtered.length}</strong> {filtered.length === 1 ? 'product' : 'products'}
-            {activeCategory !== 'all' && ` in ${activeCategory}`}
-          </p>
-        )}
+        {/* Sort */}
+        <select
+          className="shop-sort"
+          value={sort}
+          onChange={e => setSort(e.target.value)}
+          id="shop-sort"
+        >
+          <option value="default">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
 
-        {/* Loading skeletons */}
+      {/* Category tabs */}
+      <div className="container">
+        <div className="shop-tabs">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              className={`shop-tab ${activeCategory === cat ? 'shop-tab--active' : ''}`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {CATEGORY_LABELS[cat] ?? cat}
+              {activeCategory === cat && (
+                <span className="shop-tab-count">
+                  {cat === 'all' ? products.length : products.filter(p => p.category === cat).length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="container shop-grid-wrap">
         {loading && (
-          <div className="shop-grid">
-            {Array.from({ length: 8 }).map((_, i) => (
+          <div className="products-grid">
+            {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="product-skeleton" />
             ))}
           </div>
         )}
 
-        {/* Error */}
-        {error && (
-          <p className="db-error">⚠️ Could not load products. Check your Supabase credentials.</p>
+        {!loading && filtered.length === 0 && (
+          <div className="shop-empty">
+            <div className="shop-empty__icon">🔍</div>
+            <h3>No results found</h3>
+            <p>Try adjusting your search or filters.</p>
+            <button className="btn-outline" onClick={() => { setSearch(''); setActiveCategory('all') }}>
+              Clear Filters
+            </button>
+          </div>
         )}
 
-        {/* Grid */}
-        {!loading && !error && (
-          filtered.length > 0 ? (
-            <div className="shop-grid">
+        {!loading && filtered.length > 0 && (
+          <>
+            <p className="shop-result-count">{filtered.length} product{filtered.length !== 1 ? 's' : ''}</p>
+            <div className="products-grid">
               {filtered.map(p => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>
-          ) : (
-            <div className="shop-empty">
-              <div className="shop-empty__icon">🔍</div>
-              <h3>No products found</h3>
-              <p>Try a different search term or category.</p>
-              <button className="btn-outline" onClick={() => { setSearch(''); setActiveCategory('all') }}>
-                Clear Filters
-              </button>
-            </div>
-          )
+          </>
         )}
       </div>
     </main>

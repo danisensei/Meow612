@@ -1,8 +1,8 @@
-import { useCart } from '@/App'
+﻿import { useCartCtx } from '@/App'
 import './CartSidebar.css'
 
 export default function CartSidebar({ open, onClose }) {
-  const { cartItems, removeFromCart, updateQty, cartTotal } = useCart()
+  const { cartItems, removeFromCart, updateQty, cartTotal } = useCartCtx()
 
   return (
     <>

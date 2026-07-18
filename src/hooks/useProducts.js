@@ -59,6 +59,7 @@ export function useProducts() {
         description:   p.description,
         features:      p.features ?? [],
         stock:         p.stock,
+        imageUrl:      p.image_url ?? null,
       }))
 
       const cats = ['all', ...(categoriesRes.data ?? []).map((c) => c.slug)]
@@ -75,48 +76,27 @@ export function useProducts() {
   const refetch = () => setRefetchTrigger(prev => prev + 1)
 
   const addProduct = async (productData) => {
-    if (!supabase) {
-      alert("Supabase not connected. Changes won't persist.")
-      return false
-    }
+    if (!supabase) return { success: false, error: 'Supabase not connected.' }
     const { error } = await supabase.from('products').insert([productData])
-    if (error) {
-      console.error("Error adding product:", error)
-      alert("Failed to add product. Check Supabase RLS policies.")
-      return false
-    }
+    if (error) { console.error('[addProduct]', error); return { success: false, error: error.message } }
     refetch()
-    return true
+    return { success: true }
   }
 
   const removeProduct = async (id) => {
-    if (!supabase) {
-      alert("Supabase not connected. Changes won't persist.")
-      return false
-    }
+    if (!supabase) return { success: false, error: 'Supabase not connected.' }
     const { error } = await supabase.from('products').delete().eq('id', id)
-    if (error) {
-      console.error("Error removing product:", error)
-      alert("Failed to remove product. Check Supabase RLS policies.")
-      return false
-    }
+    if (error) { console.error('[removeProduct]', error); return { success: false, error: error.message } }
     refetch()
-    return true
+    return { success: true }
   }
 
   const updateProduct = async (id, updates) => {
-    if (!supabase) {
-      alert("Supabase not connected. Changes won't persist.")
-      return false
-    }
+    if (!supabase) return { success: false, error: 'Supabase not connected.' }
     const { error } = await supabase.from('products').update(updates).eq('id', id)
-    if (error) {
-      console.error("Error updating product:", error)
-      alert("Failed to update product. Check Supabase RLS policies.")
-      return false
-    }
+    if (error) { console.error('[updateProduct]', error); return { success: false, error: error.message } }
     refetch()
-    return true
+    return { success: true }
   }
 
   return { products, categories, loading, error, addProduct, removeProduct, updateProduct, refetch }

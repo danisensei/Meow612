@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useCart } from '@/App'
+import { useCartCtx } from '@/App'
 import './ProductCard.css'
 
 export default function ProductCard({ product }) {
-  const { addToCart } = useCart()
+  const { addToCart } = useCartCtx()
   const [added, setAdded] = useState(false)
 
   const handleAdd = () => {
@@ -20,8 +20,19 @@ export default function ProductCard({ product }) {
         </span>
       )}
 
-      <div className="product-card__img" style={{ background: product.color }}>
-        <span className="product-card__emoji">{product.emoji}</span>
+      <div className="product-card__img" style={{ background: product.imageUrl ? '#0e0e0e' : product.color }}>
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="product-card__photo"
+            onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
+          />
+        ) : null}
+        <span
+          className="product-card__emoji"
+          style={{ display: product.imageUrl ? 'none' : 'flex' }}
+        >{product.emoji}</span>
         <div className="product-card__img-glow" />
       </div>
 
