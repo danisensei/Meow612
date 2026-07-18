@@ -69,11 +69,7 @@ export default function Home() {
         <div className="container hero__inner">
           <div className="hero__content">
             <div className="section-label">🔥 Free shipping on orders $50+</div>
-            <h1 className="hero__title">
-              Train Like <br />
-              <span>A Beast.</span><br />
-              Look Like One Too.
-            </h1>
+
             <p className="hero__subtitle">
               Premium calisthenics equipment and apparel for athletes who refuse to settle. Built by athletes, for athletes.
             </p>
