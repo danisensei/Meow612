@@ -291,10 +291,16 @@
   color: white;
 }
 
+.btn-edit {
+  background: #3b82f6;
+  color: white;
+}
+
 .btn-delete {
   background: #c0392b;
   color: white;
 }
+
 
 /* Animations */
 @keyframes slideUp {

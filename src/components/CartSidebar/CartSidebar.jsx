@@ -1,8 +1,8 @@
-﻿import { useCartCtx } from '@/App'
+import { useCartCtx } from '@/App'
 import './CartSidebar.css'
 
 export default function CartSidebar({ open, onClose }) {
-  const { cartItems, removeFromCart, updateQty, cartTotal } = useCartCtx()
+  const { cartItems, removeFromCart, updateQty, cartTotal, openCheckout } = useCartCtx()
 
   return (
     <>
@@ -55,7 +55,7 @@ export default function CartSidebar({ open, onClose }) {
                 <span>Total</span>
                 <span>${cartTotal.toFixed(2)}</span>
               </div>
-              <button className="btn-primary cart-checkout-btn" id="checkout-btn">
+              <button className="btn-primary cart-checkout-btn" id="checkout-btn" onClick={openCheckout}>
                 Proceed to Checkout →
               </button>
             </div>

@@ -3,17 +3,18 @@ import { useCartCtx } from '@/App'
 import './ProductCard.css'
 
 export default function ProductCard({ product }) {
-  const { addToCart } = useCartCtx()
+  const { addToCart, openProductDetails } = useCartCtx()
   const [added, setAdded] = useState(false)
 
-  const handleAdd = () => {
+  const handleAdd = (e) => {
+    e.stopPropagation()
     addToCart(product)
     setAdded(true)
     setTimeout(() => setAdded(false), 1200)
   }
 
   return (
-    <div className="product-card" id={`product-${product.id}`}>
+    <div className="product-card" id={`product-${product.id}`} onClick={() => openProductDetails(product)}>
       {product.badge && (
         <span className={`product-card__badge product-card__badge--${product.badge.toLowerCase().replace(' ', '-')}`}>
           {product.badge}
@@ -41,17 +42,7 @@ export default function ProductCard({ product }) {
         <h3 className="product-card__name">{product.name}</h3>
         <p className="product-card__desc">{product.description}</p>
 
-        <div className="product-card__rating">
-          {'★'.repeat(Math.floor(product.rating))}
-          <span className="rating-num">{product.rating}</span>
-          <span className="rating-count">({product.reviews})</span>
-        </div>
 
-        <ul className="product-card__features">
-          {product.features.slice(0, 2).map((f, i) => (
-            <li key={i}><span className="feature-dot">⚡</span>{f}</li>
-          ))}
-        </ul>
 
         <div className="product-card__footer">
           <div className="product-card__price">
