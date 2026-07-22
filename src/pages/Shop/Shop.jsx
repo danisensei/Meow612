@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Shop.css'
@@ -11,7 +11,7 @@ const CATEGORY_LABELS = {
 }
 
 export default function Shop() {
-  const { products, categories, loading } = useProducts()
+  const { products, categories, loading, error } = useProducts()
   const [activeCategory, setActiveCategory] = useState('all')
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('default')
@@ -44,6 +44,14 @@ export default function Shop() {
           <p className="shop-hero__sub">Elite calisthenics equipment, apparel & accessories.</p>
         </div>
       </div>
+
+      {error && (
+        <div className="container" style={{ margin: '20px auto' }}>
+          <div style={{ background: '#3b0000', border: '1px solid #ff4444', color: '#ff8888', padding: '14px 20px', borderRadius: 10, textAlign: 'center' }}>
+            ⚠️ Database Error: {error}
+          </div>
+        </div>
+      )}
 
       <div className="container shop-controls">
         {/* Search */}

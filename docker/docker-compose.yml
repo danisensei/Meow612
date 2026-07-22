@@ -8,5 +8,5 @@ services:
         - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
     container_name: meow612-app
     ports:
-      - "5174:5174" # 5174 is the default port for Vite
+      - "5174:5174"
     restart: unless-stopped

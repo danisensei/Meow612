@@ -6,10 +6,10 @@ const FALLBACK_PRODUCTS = []
 const FALLBACK_CATEGORIES = ['all', 'parallets', 'apparel', 'accessories']
 
 export function useProducts() {
-  const [products, setProducts]     = useState([])
+  const [products, setProducts] = useState([])
   const [categories, setCategories] = useState(['all'])
-  const [loading, setLoading]       = useState(true)
-  const [error, setError]           = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [refetchTrigger, setRefetchTrigger] = useState(0)
 
   useEffect(() => {
@@ -46,20 +46,20 @@ export function useProducts() {
       }
 
       const normalised = (productsRes.data ?? []).map((p) => ({
-        id:            p.id,
-        name:          p.name,
-        category:      p.category_slug,
-        price:         Number(p.price),
+        id: p.id,
+        name: p.name,
+        category: p.category_slug,
+        price: Number(p.price),
         originalPrice: p.original_price ? Number(p.original_price) : null,
-        emoji:         p.emoji,
-        color:         p.color,
-        badge:         p.badge,
-        rating:        Number(p.rating),
-        reviews:       p.reviews,
-        description:   p.description,
-        features:      p.features ?? [],
-        stock:         p.stock,
-        imageUrl:      p.image_url ?? null,
+        emoji: p.emoji,
+        color: p.color,
+        badge: p.badge,
+        rating: Number(p.rating),
+        reviews: p.reviews,
+        description: p.description,
+        features: p.features ?? [],
+        stock: p.stock,
+        imageUrl: p.image_url ?? null,
       }))
 
       const cats = ['all', ...(categoriesRes.data ?? []).map((c) => c.slug)]

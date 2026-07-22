@@ -5,6 +5,12 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    port: 5174,
+  },
+  preview: {
+    port: 5174,
+  },
   resolve: {
     alias: {
       // @ always points to src/ — use instead of fragile ../../ paths
