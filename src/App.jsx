@@ -1,5 +1,5 @@
-import { useState, createContext, useContext } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useState, createContext, useContext, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 import { useCart } from '@/hooks/useCart'
 import Navbar from '@/components/Navbar/Navbar'
 import CartSidebar from '@/components/CartSidebar/CartSidebar'
@@ -13,6 +13,24 @@ import '@/styles/index.css'
 
 export const CartContext = createContext(null)
 export function useCartCtx() { return useContext(CartContext) }
+
+// Secret keyboard shortcut helper: Ctrl+Shift+A or Cmd+Shift+A to jump to Admin
+function SecretAdminShortcut() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault()
+        navigate('/meow-admin')
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [navigate])
+
+  return null
+}
 
 function App() {
   const cart = useCart()
@@ -40,6 +58,7 @@ function App() {
       openProductDetails: (product) => setActiveProduct(product)
     }}>
       <Router>
+        <SecretAdminShortcut />
         <div className="noise-overlay" />
         <Navbar cartCount={cart.cartCount} onCartOpen={() => setCartOpen(true)} />
         <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} />

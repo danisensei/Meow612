@@ -1,130 +1,195 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '@/hooks/useProducts'
+import { useCartCtx } from '@/App'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Home.css'
+
+const featuredDaniyalProduct = {
+  id: 'daniyal-parallels-featured',
+  name: 'Daniyal Parallels',
+  category: 'parallets',
+  price: 123.00,
+  originalPrice: 149.99,
+  description: 'Professional Wood Finish. Engineered for maximum stability, palm comfort, and elite planche training.',
+  imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6r85watuZn0mjdTjtu8gV6sJYsRiXDmnOiTRj9tsavciJaF27w-i0YOZIYi2Cm33L6daQg8OethgHelr1qfs78gT_2DbNPA-KuqUhUEc74C7lD-eqgITWdjA2YKH_B8AWfnJksaExpDpE_IBqVJfvAvOEJ_N6QUtXXK2v55TTX_o4-wdqEgIROt-27OxBKQn0ajTPrQArfI7ikprgmV4X1OpDTf6yyk6hUdc16TjP0_eynnKUXNZ7IjiaN8mbulXvA8PqyaitjZg',
+  badge: 'ELITE GRADE',
+  rating: 5.0,
+  reviews: 48,
+  emoji: '🪵',
+  color: '#1c1b1b'
+}
 
 const testimonials = [
   {
     name: 'Marcus T.',
     handle: '@marcus_trains',
-    text: 'These parallets completely changed my training. The grip, the stability — pure perfection.',
-    rating: 5,
+    text: '"These parallels completely changed my training. The grip, the stability — pure perfection. It\'s the only gear I trust for my planche sessions."',
     avatar: 'MT',
   },
   {
     name: 'Sofia K.',
     handle: '@sofiastrength',
-    text: 'Finally landed my first planche on these. The height is spot on and they feel incredibly sturdy.',
-    rating: 5,
+    text: '"Finally landed my first planche on these. The height is spot on and they feel incredibly sturdy even on uneven surfaces."',
     avatar: 'SK',
   },
   {
     name: 'James R.',
     handle: '@jamesfit',
-    text: "I've tried many brands. Meow612 is in a league of its own. The craftsmanship is unreal.",
-    rating: 5,
+    text: '"I\'ve tried many brands. Meow612 is in a league of its own. The craftsmanship and durability are unmatched."',
     avatar: 'JR',
   },
 ]
 
-const marqueeItems = ['CALISTHENICS', 'PARALLETS', 'APPAREL', 'ACCESSORIES', 'BUILT DIFFERENT', 'ATHLETE GRADE']
-
 export default function Home() {
   const { products, loading, error } = useProducts()
+  const { addToCart, openProductDetails } = useCartCtx()
+  const [featuredAdded, setFeaturedAdded] = useState(false)
+
+  const handleAddFeatured = (e) => {
+    e.stopPropagation()
+    addToCart(featuredDaniyalProduct)
+    setFeaturedAdded(true)
+    setTimeout(() => setFeaturedAdded(false), 1200)
+  }
 
   return (
-    <main className="home">
-
-      {/* ── HERO ──────────────────────────────────── */}
+    <main className="home-page">
+      
+      {/* ── HERO SECTION ──────────────────────────── */}
       <section className="hero">
         <div className="hero__bg-glow" />
         <div className="container hero__inner">
           <div className="hero__content">
             <p className="hero__eyebrow">Premium Calisthenics Equipment</p>
             <h1 className="hero__title">
-              BUILT<br />
-              <span>FOR THE</span><br />
-              ELITE
+              BUILT
+              <span>FOR THE</span>
+              <strong className="hero__title-highlight">ELITE</strong>
             </h1>
             <p className="hero__sub">
               Engineered for athletes who refuse to settle. Every product crafted with precision and purpose.
             </p>
             <div className="hero__ctas">
-              <Link to="/shop" className="btn-primary" id="hero-shop-btn">Shop Gear</Link>
-              <a href="#community" className="btn-outline">See Reviews</a>
+              <Link to="/shop" className="btn-primary" id="hero-shop-gear-btn">
+                Shop Gear →
+              </Link>
+              <a href="#community" className="btn-outline">
+                See Reviews
+              </a>
             </div>
           </div>
 
           <div className="hero__card-wrap">
-            <div className="hero__card">
+            <div 
+              className="hero__card" 
+              onClick={() => openProductDetails(featuredDaniyalProduct)}
+            >
               <div className="hero__card-inner">
-                <div className="hero__card-tag">PERFORMANCE GEAR</div>
-                <div className="hero__card-emoji">🏋️</div>
+                <span className="hero__card-tag">ELITE GRADE</span>
                 <div className="hero__card-parallette">
                   <div className="par-base" />
                   <div className="par-post par-post--l" />
                   <div className="par-post par-post--r" />
                   <div className="par-bar" />
                 </div>
+                <span className="hero__card-emoji">🪵</span>
                 <div className="hero__card-badge">
-                  <span>★ 4.9</span>
-                  <span>10K+ Athletes</span>
+                  <span>⚡ Planche Ready</span>
+                  <span>🔥 Beech Wood</span>
                 </div>
               </div>
             </div>
             <div className="hero__floating-pill hero__floating-pill--1">
-              <span>⚡</span> Pro Grade
+              <span>🏆 Tested by Pros</span>
             </div>
             <div className="hero__floating-pill hero__floating-pill--2">
-              <span>🌍</span> Ships Worldwide
+              <span>🚚 Free Shipping</span>
             </div>
           </div>
         </div>
 
         <div className="hero__scroll-hint">
+          <span>SCROLL</span>
           <div className="hero__scroll-line" />
-          <span>Scroll</span>
         </div>
       </section>
 
       {/* ── MARQUEE TICKER ────────────────────────── */}
-      <div className="marquee-strip">
+      <section className="marquee-strip">
         <div className="marquee-track">
-          {[...marqueeItems, ...marqueeItems].map((item, i) => (
-            <span key={i} className="marquee-item">
-              {item} <span className="marquee-dot">✦</span>
-            </span>
-          ))}
+          <div className="marquee-content">
+            <span className="marquee-item">CALISTHENICS <span className="marquee-dot">✚</span></span>
+            <span className="marquee-item">PARALLETS <span className="marquee-dot">✚</span></span>
+            <span className="marquee-item">APPAREL <span className="marquee-dot">✚</span></span>
+            <span className="marquee-item">ACCESSORIES <span className="marquee-dot">✚</span></span>
+          </div>
+          <div className="marquee-content" aria-hidden="true">
+            <span className="marquee-item">CALISTHENICS <span className="marquee-dot">✚</span></span>
+            <span className="marquee-item">PARALLETS <span className="marquee-dot">✚</span></span>
+            <span className="marquee-item">APPAREL <span className="marquee-dot">✚</span></span>
+            <span className="marquee-item">ACCESSORIES <span className="marquee-dot">✚</span></span>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── GEAR SECTION ──────────────────────────── */}
-      <section className="featured-section" id="featured">
+      {/* ── COLLECTION SECTION ────────────────────── */}
+      <section className="featured-section">
         <div className="container">
           <div className="featured-header">
             <div>
               <p className="section-label">Collection</p>
-              <h2 className="section-title">Our <span>Gear</span></h2>
+              <h2 className="section-title">OUR <span>GEAR</span></h2>
             </div>
-            <Link to="/shop" className="btn-outline" id="view-all-btn">View All</Link>
+            <Link to="/shop" className="btn-outline">
+              View All Products →
+            </Link>
           </div>
 
+          {/* Featured Daniyal Parallels Banner */}
+          <div 
+            className="featured-hero-banner"
+            onClick={() => openProductDetails(featuredDaniyalProduct)}
+          >
+            <div className="featured-hero-banner__img-wrap">
+              <img 
+                src={featuredDaniyalProduct.imageUrl} 
+                alt={featuredDaniyalProduct.name}
+                className="featured-hero-banner__img"
+              />
+              <span className="featured-hero-banner__badge">ELITE GRADE</span>
+            </div>
+            <div className="featured-hero-banner__body">
+              <span className="featured-hero-banner__category">PARALLETS</span>
+              <h3 className="featured-hero-banner__title">Daniyal Parallels</h3>
+              <p className="featured-hero-banner__desc">
+                Professional Wood Finish. Engineered for maximum stability, palm comfort, and elite planche training.
+              </p>
+              <div className="featured-hero-banner__footer">
+                <div className="featured-hero-banner__price">
+                  <span className="banner-price-current">${featuredDaniyalProduct.price.toFixed(2)}</span>
+                  <span className="banner-price-original">${featuredDaniyalProduct.originalPrice.toFixed(2)}</span>
+                </div>
+                <button 
+                  onClick={handleAddFeatured}
+                  className={`btn-primary ${featuredAdded ? 'btn-primary--added' : ''}`}
+                >
+                  {featuredAdded ? '✓ Added to Cart' : 'Add to Cart 🛒'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Products Grid */}
           {loading && (
             <div className="products-grid">
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="product-skeleton" />
               ))}
             </div>
           )}
-          {error && <p className="db-error">⚠️ Could not load products.</p>}
-          {!loading && !error && products.length === 0 && (
-            <div className="gear-empty">
-              <div className="gear-empty__icon">🔧</div>
-              <h3>New drops coming soon</h3>
-              <p>We're restocking. Check back shortly for the latest gear.</p>
-            </div>
-          )}
-          {!loading && !error && products.length > 0 && (
+
+          {!loading && products.length > 0 && (
             <div className="products-grid">
               {products.map(p => (
                 <ProductCard key={p.id} product={p} />
@@ -134,20 +199,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ──────────────────────────── */}
+      {/* ── COMMUNITY SECTION ──────────────────────── */}
       <section className="testimonials-section" id="community">
         <div className="container">
           <div className="testimonials-header">
-            <div>
-              <p className="section-label">Community</p>
-              <h2 className="section-title">What They <span>Say</span></h2>
-            </div>
+            <p className="section-label">Community</p>
+            <h2 className="section-title">WHAT THEY <span>SAY</span></h2>
           </div>
+
           <div className="testimonials-grid">
-            {testimonials.map((t, i) => (
-              <div key={i} className="testimonial-card">
-                <div className="testimonial-stars">{'★'.repeat(t.rating)}</div>
-                <p className="testimonial-text">"{t.text}"</p>
+            {testimonials.map((t, idx) => (
+              <div key={idx} className="testimonial-card">
+                <div className="testimonial-stars">★ ★ ★ ★ ★</div>
+                <p className="testimonial-text">{t.text}</p>
                 <div className="testimonial-author">
                   <div className="testimonial-avatar">{t.avatar}</div>
                   <div>
@@ -165,8 +229,10 @@ export default function Home() {
       <footer className="footer">
         <div className="container footer__inner">
           <div className="footer__brand">
-            <p className="footer__logo">MEOW612</p>
-            <p className="footer__copy">© 2025 Meow612. All rights reserved.</p>
+            <span className="footer__logo">MEOW<span>612</span></span>
+            <Link to="/meow-admin" style={{ color: 'inherit', textDecoration: 'none', cursor: 'default' }} title="Meow Portal">
+              <p className="footer__copy">© 2026 MEOW612. ALL RIGHTS RESERVED.</p>
+            </Link>
           </div>
           <div className="footer__socials">
             <a href="https://www.instagram.com/hassam_612/" target="_blank" rel="noopener noreferrer" className="social-btn" aria-label="Instagram">
@@ -181,7 +247,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
     </main>
   )
 }

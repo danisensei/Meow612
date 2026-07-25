@@ -1,60 +1,163 @@
-﻿import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import BottomNav from './BottomNav'
 import './Navbar.css'
 
 export default function Navbar({ cartCount, onCartOpen }) {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [logoClickCount, setLogoClickCount] = useState(0)
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    setMenuOpen(false)
+    setDrawerOpen(false)
   }, [location])
 
+  useEffect(() => {
+    if (drawerOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+  }, [drawerOpen])
+
+  // Secret Triple-Click on Logo triggers Admin Navigation
+  const handleLogoClick = (e) => {
+    setLogoClickCount(prev => {
+      const next = prev + 1
+      if (next >= 3) {
+        e.preventDefault()
+        navigate('/meow-admin')
+        return 0
+      }
+      return next
+    })
+
+    setTimeout(() => {
+      setLogoClickCount(0)
+    }, 1500)
+  }
+
   return (
-    <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
-      <div className="navbar__inner container">
-        <Link to="/" className="navbar__logo">
-          <img src="/favicon.png" alt="Meow612 cat" className="navbar__logo-icon" />
-          <span className="navbar__logo-text">MEOW<span>612</span></span>
+    <>
+      {/* Top Header Bar */}
+      <header className="top-header">
+        <Link to="/" className="top-header__brand" onClick={handleLogoClick}>
+          <span className="material-symbols-outlined top-header__logo-icon">bolt</span>
+          <span className="top-header__logo-text">
+            MEOW<span>612</span>
+          </span>
         </Link>
 
-        <ul className={`navbar__links ${menuOpen ? 'navbar__links--open' : ''}`}>
-          <li>
-            <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>
-              <span className="link-icon">⚡</span> Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/shop" className={({ isActive }) => isActive ? 'active' : ''}>
-              <span className="link-icon">🏋️</span> Shop
-            </NavLink>
-          </li>
-          <li>
-            <a href="/#community" onClick={() => setMenuOpen(false)}>
-              <span className="link-icon">🌐</span> Community
-            </a>
-          </li>
-        </ul>
+        {/* Desktop Nav Links */}
+        <nav>
+          <ul className="top-header__desktop-nav">
+            <li>
+              <NavLink 
+                to="/" 
+                end 
+                className={({ isActive }) => `top-header__nav-link ${isActive ? 'active' : ''}`}
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink 
+                to="/shop" 
+                className={({ isActive }) => `top-header__nav-link ${isActive ? 'active' : ''}`}
+              >
+                Shop
+              </NavLink>
+            </li>
+            <li>
+              <a href="/#community" className="top-header__nav-link">
+                Community
+              </a>
+            </li>
+          </ul>
+        </nav>
 
-        <div className="navbar__actions">
-          <button className="navbar__cart-btn" onClick={onCartOpen} id="cart-btn">
-            <span className="navbar__cart-icon">🛒</span>
-            {cartCount > 0 && <span className="navbar__cart-badge">{cartCount}</span>}
+        {/* Actions */}
+        <div className="top-header__actions">
+          <button 
+            onClick={onCartOpen}
+            className="top-header__cart-btn"
+            aria-label="Shopping Cart"
+            id="cart-btn"
+          >
+            <span className="material-symbols-outlined">shopping_cart</span>
+            {cartCount > 0 && (
+              <span className="top-header__cart-badge">{cartCount}</span>
+            )}
           </button>
-          <button className="navbar__hamburger" onClick={() => setMenuOpen(v => !v)} id="menu-btn" aria-label="Toggle menu">
-            <span className={menuOpen ? 'open' : ''} />
-            <span className={menuOpen ? 'open' : ''} />
-            <span className={menuOpen ? 'open' : ''} />
+          
+          <button 
+            onClick={() => setDrawerOpen(true)}
+            className="top-header__menu-btn"
+            id="menu-toggle"
+            aria-label="Open menu drawer"
+          >
+            <span className="material-symbols-outlined">menu</span>
           </button>
         </div>
-      </div>
-    </nav>
+      </header>
+
+      {/* Mobile Navigation Drawer */}
+      <div 
+        className={`drawer-overlay ${drawerOpen ? 'drawer-overlay--open' : ''}`} 
+        id="drawer-overlay"
+        onClick={() => setDrawerOpen(false)}
+      />
+      
+      <aside 
+        className={`nav-drawer ${drawerOpen ? 'nav-drawer--open' : ''}`}
+        id="nav-drawer"
+      >
+        <div className="nav-drawer__header">
+          <span className="nav-drawer__title">MENU</span>
+          <button 
+            onClick={() => setDrawerOpen(false)}
+            className="nav-drawer__close" 
+            id="close-drawer"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <nav>
+          <ul className="nav-drawer__links">
+            <li>
+              <Link 
+                to="/" 
+                className="nav-drawer__link active"
+                onClick={() => setDrawerOpen(false)}
+              >
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link 
+                to="/shop" 
+                className="nav-drawer__link"
+                onClick={() => setDrawerOpen(false)}
+              >
+                Shop
+              </Link>
+            </li>
+            <li>
+              <a 
+                href="/#community" 
+                className="nav-drawer__link"
+                onClick={() => setDrawerOpen(false)}
+              >
+                Community
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <BottomNav onCartOpen={onCartOpen} cartCount={cartCount} />
+    </>
   )
 }
