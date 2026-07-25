@@ -46,9 +46,9 @@ export default function ProductCard({ product }) {
 
         <div className="product-card__footer">
           <div className="product-card__price">
-            <span className="price-current">${product.price.toFixed(2)}</span>
+            <span className="price-current">PKR {product.price.toFixed(2)}</span>
             {product.originalPrice && (
-              <span className="price-original">${product.originalPrice.toFixed(2)}</span>
+              <span className="price-original">PKR {product.originalPrice.toFixed(2)}</span>
             )}
           </div>
           <button

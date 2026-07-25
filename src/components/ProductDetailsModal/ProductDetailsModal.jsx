@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useCartCtx } from '@/App'
 import './ProductDetailsModal.css'
 
@@ -44,9 +44,9 @@ export default function ProductDetailsModal({ product, onClose }) {
             <h2 className="p-details-title">{product.name}</h2>
 
             <div className="p-details-price">
-              <span className="current">${product.price.toFixed(2)}</span>
+              <span className="current">PKR {product.price.toFixed(2)}</span>
               {product.originalPrice && (
-                <span className="original">${product.originalPrice.toFixed(2)}</span>
+                <span className="original">PKR {product.originalPrice.toFixed(2)}</span>
               )}
             </div>
 
@@ -83,7 +83,7 @@ export default function ProductDetailsModal({ product, onClose }) {
                 onClick={handleAdd}
                 disabled={added}
               >
-                {added ? '✓ Added' : `Add to Cart • $${(product.price * qty).toFixed(2)}`}
+                {added ? '✓ Added' : `Add to Cart • PKR ${(product.price * qty).toFixed(2)}`}
               </button>
             </div>
           </div>

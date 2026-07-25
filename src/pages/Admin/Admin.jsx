@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import { supabase } from '@/lib/supabase'
 import './Admin.css'
@@ -108,7 +108,7 @@ function OrderDetailsOverlay({ order, onClose }) {
           <p>👤 <strong>Customer:</strong> {order.customer_name} ({order.customer_email})</p>
           <p>📅 <strong>Date:</strong> {new Date(order.created_at).toLocaleString()}</p>
           <p>📍 <strong>Address:</strong> {order.address}</p>
-          <p>💵 <strong>Total Amount:</strong> <span style={{ color: 'var(--accent-primary)', fontWeight: 800 }}>${Number(order.total_price).toFixed(2)}</span></p>
+          <p>💵 <strong>Total Amount:</strong> <span style={{ color: 'var(--accent-primary)', fontWeight: 800 }}>PKR {Number(order.total_price).toFixed(2)}</span></p>
         </div>
 
         <h4 style={{ fontSize: 14, fontWeight: 700, color: '#f0f0f0', marginBottom: 12, borderBottom: '1px solid #222', paddingBottom: 8 }}>Items purchased</h4>
@@ -120,9 +120,9 @@ function OrderDetailsOverlay({ order, onClose }) {
               </div>
               <div style={{ flex: 1, textAlign: 'left' }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{item.name}</p>
-                <p style={{ fontSize: 11, color: '#888' }}>Qty: {item.qty} · ${Number(item.price).toFixed(2)} each</p>
+                <p style={{ fontSize: 11, color: '#888' }}>Qty: {item.qty} · PKR {Number(item.price).toFixed(2)} each</p>
               </div>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>${(Number(item.price) * item.qty).toFixed(2)}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>PKR {(Number(item.price) * item.qty).toFixed(2)}</span>
             </div>
           ))}
         </div>
@@ -457,7 +457,7 @@ export default function Admin() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Price ($)</label>
+                  <label>Price (PKR)</label>
                   <input required type="number" step="0.01" min="0.01" name="price" value={formData.price} onChange={handleInputChange} placeholder="29.99" />
                 </div>
                 <div className="form-group">
@@ -515,10 +515,10 @@ export default function Admin() {
                           </div>
                         </td>
                         <td>
-                          ${p.price.toFixed(2)}
+                          PKR {p.price.toFixed(2)}
                           {p.originalPrice && (
                             <span style={{ textDecoration: 'line-through', color: '#555', marginLeft: 8, fontSize: '0.8rem' }}>
-                              ${p.originalPrice.toFixed(2)}
+                              PKR {p.originalPrice.toFixed(2)}
                             </span>
                           )}
                         </td>
@@ -573,7 +573,7 @@ export default function Admin() {
                         </div>
                       </td>
                       <td style={{ fontSize: '0.85rem', color: '#aaa' }}>{new Date(order.created_at).toLocaleDateString()}</td>
-                      <td style={{ fontWeight: 700, color: '#f0f0f0' }}>${Number(order.total_price).toFixed(2)}</td>
+                      <td style={{ fontWeight: 700, color: '#f0f0f0' }}>PKR {Number(order.total_price).toFixed(2)}</td>
                       <td>
                         <select
                           value={order.status}

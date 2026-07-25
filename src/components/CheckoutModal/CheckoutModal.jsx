@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useCartCtx } from '@/App'
 import { supabase } from '@/lib/supabase'
 import './CheckoutModal.css'
@@ -101,7 +101,7 @@ export default function CheckoutModal({ open, onClose, onSuccess }) {
             {error && <p className="checkout-error">⚠️ {error}</p>}
 
             <button type="submit" className="btn-primary checkout-submit" disabled={submitting}>
-              {submitting ? <span className="checkout-spinner" /> : `Place Order • $${cartTotal.toFixed(2)}`}
+              {submitting ? <span className="checkout-spinner" /> : `Place Order • PKR ${cartTotal.toFixed(2)}`}
             </button>
           </form>
 
@@ -118,7 +118,7 @@ export default function CheckoutModal({ open, onClose, onSuccess }) {
                     <p className="checkout-sum-name">{item.name}</p>
                     <p className="checkout-sum-qty">Qty: {item.qty}</p>
                   </div>
-                  <span className="checkout-sum-price">${(item.price * item.qty).toFixed(2)}</span>
+                  <span className="checkout-sum-price">PKR {(item.price * item.qty).toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -131,7 +131,7 @@ export default function CheckoutModal({ open, onClose, onSuccess }) {
               <div className="checkout-divider" />
               <div className="checkout-row total">
                 <span>Total</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>PKR {cartTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>

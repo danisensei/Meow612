@@ -29,7 +29,7 @@ export default function CartSidebar({ open, onClose }) {
                   </div>
                   <div className="cart-item__info">
                     <p className="cart-item__name">{item.name}</p>
-                    <p className="cart-item__price">${(item.price * item.qty).toFixed(2)}</p>
+                    <p className="cart-item__price">PKR {(item.price * item.qty).toFixed(2)}</p>
                     <div className="cart-item__controls">
                       <button onClick={() => updateQty(item.id, item.qty - 1)} className="qty-btn">−</button>
                       <span className="qty-display">{item.qty}</span>
@@ -44,7 +44,7 @@ export default function CartSidebar({ open, onClose }) {
             <div className="cart-sidebar__footer">
               <div className="cart-subtotal">
                 <span>Subtotal</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>PKR {cartTotal.toFixed(2)}</span>
               </div>
               <div className="cart-subtotal cart-tax">
                 <span>Shipping</span>
@@ -53,7 +53,7 @@ export default function CartSidebar({ open, onClose }) {
               <div className="cart-divider" />
               <div className="cart-total">
                 <span>Total</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>PKR {cartTotal.toFixed(2)}</span>
               </div>
               <button className="btn-primary cart-checkout-btn" id="checkout-btn" onClick={openCheckout}>
                 Proceed to Checkout →
