@@ -5,7 +5,7 @@ import { useCartCtx } from '@/App'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Home.css'
 
-const featuredDaniyalProduct = {
+const fallbackDaniyalProduct = {
   id: 'daniyal-parallels-featured',
   name: 'Daniyal Parallels',
   category: 'parallets',
@@ -42,13 +42,16 @@ const testimonials = [
 ]
 
 export default function Home() {
-  const { products, loading, error } = useProducts()
+  const { products, loading } = useProducts()
   const { addToCart, openProductDetails } = useCartCtx()
   const [featuredAdded, setFeaturedAdded] = useState(false)
 
+  // Dynamically pull the featured product from Supabase database
+  const featuredProduct = products.find(p => p.name.toLowerCase().includes('daniyal')) || products[0] || fallbackDaniyalProduct
+
   const handleAddFeatured = (e) => {
     e.stopPropagation()
-    addToCart(featuredDaniyalProduct)
+    addToCart(featuredProduct)
     setFeaturedAdded(true)
     setTimeout(() => setFeaturedAdded(false), 1200)
   }
@@ -83,17 +86,17 @@ export default function Home() {
           <div className="hero__card-wrap">
             <div 
               className="hero__card" 
-              onClick={() => openProductDetails(featuredDaniyalProduct)}
+              onClick={() => openProductDetails(featuredProduct)}
             >
               <div className="hero__card-inner">
-                <span className="hero__card-tag">ELITE GRADE</span>
+                <span className="hero__card-tag">{featuredProduct.badge || 'ELITE GRADE'}</span>
                 <div className="hero__card-parallette">
                   <div className="par-base" />
                   <div className="par-post par-post--l" />
                   <div className="par-post par-post--r" />
                   <div className="par-bar" />
                 </div>
-                <span className="hero__card-emoji">🪵</span>
+                <span className="hero__card-emoji">{featuredProduct.emoji || '🪵'}</span>
                 <div className="hero__card-badge">
                   <span>⚡ Planche Ready</span>
                   <span>🔥 Beech Wood</span>
@@ -146,29 +149,37 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Featured Daniyal Parallels Banner */}
+          {/* Featured Hero Banner */}
           <div 
             className="featured-hero-banner"
-            onClick={() => openProductDetails(featuredDaniyalProduct)}
+            onClick={() => openProductDetails(featuredProduct)}
           >
             <div className="featured-hero-banner__img-wrap">
-              <img 
-                src={featuredDaniyalProduct.imageUrl} 
-                alt={featuredDaniyalProduct.name}
-                className="featured-hero-banner__img"
-              />
-              <span className="featured-hero-banner__badge">ELITE GRADE</span>
+              {featuredProduct.imageUrl ? (
+                <img 
+                  src={featuredProduct.imageUrl} 
+                  alt={featuredProduct.name}
+                  className="featured-hero-banner__img"
+                />
+              ) : (
+                <div style={{ fontSize: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                  {featuredProduct.emoji || '🪵'}
+                </div>
+              )}
+              <span className="featured-hero-banner__badge">{featuredProduct.badge || 'ELITE GRADE'}</span>
             </div>
             <div className="featured-hero-banner__body">
-              <span className="featured-hero-banner__category">PARALLETS</span>
-              <h3 className="featured-hero-banner__title">Daniyal Parallels</h3>
+              <span className="featured-hero-banner__category">{featuredProduct.category.toUpperCase()}</span>
+              <h3 className="featured-hero-banner__title">{featuredProduct.name}</h3>
               <p className="featured-hero-banner__desc">
-                Professional Wood Finish. Engineered for maximum stability, palm comfort, and elite planche training.
+                {featuredProduct.description}
               </p>
               <div className="featured-hero-banner__footer">
                 <div className="featured-hero-banner__price">
-                  <span className="banner-price-current">${featuredDaniyalProduct.price.toFixed(2)}</span>
-                  <span className="banner-price-original">${featuredDaniyalProduct.originalPrice.toFixed(2)}</span>
+                  <span className="banner-price-current">${Number(featuredProduct.price).toFixed(2)}</span>
+                  {featuredProduct.originalPrice && (
+                    <span className="banner-price-original">${Number(featuredProduct.originalPrice).toFixed(2)}</span>
+                  )}
                 </div>
                 <button 
                   onClick={handleAddFeatured}
