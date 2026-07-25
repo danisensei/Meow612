@@ -1,60 +1,13 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '@/hooks/useProducts'
-import { useCartCtx } from '@/App'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Home.css'
 
-const fallbackDaniyalProduct = {
-  id: 'daniyal-parallels-featured',
-  name: 'Daniyal Parallels',
-  category: 'parallets',
-  price: 123.00,
-  originalPrice: 149.99,
-  description: 'Professional Wood Finish. Engineered for maximum stability, palm comfort, and elite planche training.',
-  imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6r85watuZn0mjdTjtu8gV6sJYsRiXDmnOiTRj9tsavciJaF27w-i0YOZIYi2Cm33L6daQg8OethgHelr1qfs78gT_2DbNPA-KuqUhUEc74C7lD-eqgITWdjA2YKH_B8AWfnJksaExpDpE_IBqVJfvAvOEJ_N6QUtXXK2v55TTX_o4-wdqEgIROt-27OxBKQn0ajTPrQArfI7ikprgmV4X1OpDTf6yyk6hUdc16TjP0_eynnKUXNZ7IjiaN8mbulXvA8PqyaitjZg',
-  badge: 'ELITE GRADE',
-  rating: 5.0,
-  reviews: 48,
-  emoji: '🪵',
-  color: '#1c1b1b'
-}
 
-const testimonials = [
-  {
-    name: 'Marcus T.',
-    handle: '@marcus_trains',
-    text: '"These parallels completely changed my training. The grip, the stability — pure perfection. It\'s the only gear I trust for my planche sessions."',
-    avatar: 'MT',
-  },
-  {
-    name: 'Sofia K.',
-    handle: '@sofiastrength',
-    text: '"Finally landed my first planche on these. The height is spot on and they feel incredibly sturdy even on uneven surfaces."',
-    avatar: 'SK',
-  },
-  {
-    name: 'James R.',
-    handle: '@jamesfit',
-    text: '"I\'ve tried many brands. Meow612 is in a league of its own. The craftsmanship and durability are unmatched."',
-    avatar: 'JR',
-  },
-]
+
 
 export default function Home() {
   const { products, loading } = useProducts()
-  const { addToCart, openProductDetails } = useCartCtx()
-  const [featuredAdded, setFeaturedAdded] = useState(false)
-
-  // Dynamically pull the featured product from Supabase database
-  const featuredProduct = products.find(p => p.name.toLowerCase().includes('daniyal')) || products[0] || fallbackDaniyalProduct
-
-  const handleAddFeatured = (e) => {
-    e.stopPropagation()
-    addToCart(featuredProduct)
-    setFeaturedAdded(true)
-    setTimeout(() => setFeaturedAdded(false), 1200)
-  }
 
   return (
     <main className="home-page">
@@ -84,19 +37,16 @@ export default function Home() {
           </div>
 
           <div className="hero__card-wrap">
-            <div 
-              className="hero__card" 
-              onClick={() => openProductDetails(featuredProduct)}
-            >
+            <div className="hero__card">
               <div className="hero__card-inner">
-                <span className="hero__card-tag">{featuredProduct.badge || 'ELITE GRADE'}</span>
+                <span className="hero__card-tag">ELITE GRADE</span>
                 <div className="hero__card-parallette">
                   <div className="par-base" />
                   <div className="par-post par-post--l" />
                   <div className="par-post par-post--r" />
                   <div className="par-bar" />
                 </div>
-                <span className="hero__card-emoji">{featuredProduct.emoji || '🪵'}</span>
+                <span className="hero__card-emoji">🤸</span>
                 <div className="hero__card-badge">
                   <span>⚡ Planche Ready</span>
                   <span>🔥 Beech Wood</span>
@@ -106,9 +56,7 @@ export default function Home() {
             <div className="hero__floating-pill hero__floating-pill--1">
               <span>🏆 Tested by Pros</span>
             </div>
-            <div className="hero__floating-pill hero__floating-pill--2">
-              <span>🚚 Free Shipping</span>
-            </div>
+
           </div>
         </div>
 
@@ -149,48 +97,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Featured Hero Banner */}
-          <div 
-            className="featured-hero-banner"
-            onClick={() => openProductDetails(featuredProduct)}
-          >
-            <div className="featured-hero-banner__img-wrap">
-              {featuredProduct.imageUrl ? (
-                <img 
-                  src={featuredProduct.imageUrl} 
-                  alt={featuredProduct.name}
-                  className="featured-hero-banner__img"
-                />
-              ) : (
-                <div style={{ fontSize: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                  {featuredProduct.emoji || '🪵'}
-                </div>
-              )}
-              <span className="featured-hero-banner__badge">{featuredProduct.badge || 'ELITE GRADE'}</span>
-            </div>
-            <div className="featured-hero-banner__body">
-              <span className="featured-hero-banner__category">{featuredProduct.category.toUpperCase()}</span>
-              <h3 className="featured-hero-banner__title">{featuredProduct.name}</h3>
-              <p className="featured-hero-banner__desc">
-                {featuredProduct.description}
-              </p>
-              <div className="featured-hero-banner__footer">
-                <div className="featured-hero-banner__price">
-                  <span className="banner-price-current">${Number(featuredProduct.price).toFixed(2)}</span>
-                  {featuredProduct.originalPrice && (
-                    <span className="banner-price-original">${Number(featuredProduct.originalPrice).toFixed(2)}</span>
-                  )}
-                </div>
-                <button 
-                  onClick={handleAddFeatured}
-                  className={`btn-primary ${featuredAdded ? 'btn-primary--added' : ''}`}
-                >
-                  {featuredAdded ? '✓ Added to Cart' : 'Add to Cart 🛒'}
-                </button>
-              </div>
-            </div>
-          </div>
-
           {/* Products Grid */}
           {loading && (
             <div className="products-grid">
@@ -210,31 +116,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── COMMUNITY SECTION ──────────────────────── */}
-      <section className="testimonials-section" id="community">
-        <div className="container">
-          <div className="testimonials-header">
-            <p className="section-label">Community</p>
-            <h2 className="section-title">WHAT THEY <span>SAY</span></h2>
-          </div>
 
-          <div className="testimonials-grid">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="testimonial-card">
-                <div className="testimonial-stars">★ ★ ★ ★ ★</div>
-                <p className="testimonial-text">{t.text}</p>
-                <div className="testimonial-author">
-                  <div className="testimonial-avatar">{t.avatar}</div>
-                  <div>
-                    <p className="testimonial-name">{t.name}</p>
-                    <p className="testimonial-handle">{t.handle}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── FOOTER ────────────────────────────────── */}
       <footer className="footer">

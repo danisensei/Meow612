@@ -1,91 +1,9 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 
-// Static fallback — used when Supabase is not configured, empty, or unreachable
-const FALLBACK_PRODUCTS = [
-  {
-    id: 1,
-    name: 'Daniyal Parallels',
-    category: 'parallets',
-    price: 123.00,
-    originalPrice: 149.99,
-    emoji: '🪵',
-    color: '#1a1918',
-    badge: 'BEST SELLER',
-    rating: 5.0,
-    reviews: 48,
-    description: 'Professional Wood Finish. Engineered for maximum stability, palm comfort, and elite planche training.',
-    features: ['High-grade solid beech wood', 'Anti-slip rubber feet base', 'Supports up to 350kg load'],
-    stock: 12,
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6r85watuZn0mjdTjtu8gV6sJYsRiXDmnOiTRj9tsavciJaF27w-i0YOZIYi2Cm33L6daQg8OethgHelr1qfs78gT_2DbNPA-KuqUhUEc74C7lD-eqgITWdjA2YKH_B8AWfnJksaExpDpE_IBqVJfvAvOEJ_N6QUtXXK2v55TTX_o4-wdqEgIROt-27OxBKQn0ajTPrQArfI7ikprgmV4X1OpDTf6yyk6hUdc16TjP0_eynnKUXNZ7IjiaN8mbulXvA8PqyaitjZg'
-  },
-  {
-    id: 2,
-    name: 'Steel Pro Parallettes',
-    category: 'parallets',
-    price: 89.99,
-    originalPrice: 109.99,
-    emoji: '🏋️',
-    color: '#131313',
-    badge: 'PRO GRADE',
-    rating: 4.9,
-    reviews: 32,
-    description: 'Heavy duty powder-coated steel parallettes built for indoor and outdoor intense sessions.',
-    features: ['Powder-coated grip surface', 'Ultra wide stability base', 'Portable lightweight design'],
-    stock: 20,
-    imageUrl: null
-  },
-  {
-    id: 3,
-    name: 'Meow612 Elite Oversized Hoodie',
-    category: 'apparel',
-    price: 65.00,
-    originalPrice: 79.99,
-    emoji: '👕',
-    color: '#201f1f',
-    badge: 'NEW',
-    rating: 4.8,
-    reviews: 19,
-    description: 'Premium heavyweight cotton oversized hoodie designed for maximum freedom of movement during warmups.',
-    features: ['450GSM organic heavy cotton', 'Embroidered MEOW612 chest emblem', 'Relaxed drop-shoulder fit'],
-    stock: 15,
-    imageUrl: null
-  },
-  {
-    id: 4,
-    name: 'Liquid Chalk Formula (200ml)',
-    category: 'accessories',
-    price: 18.50,
-    originalPrice: null,
-    emoji: '🧪',
-    color: '#1c1b1b',
-    badge: null,
-    rating: 5.0,
-    reviews: 64,
-    description: 'Fast-drying, long-lasting grip formula. Zero mess, maximum friction for strict calisthenics skills.',
-    features: ['Dries in under 10 seconds', 'Sweat-resistant ultra grip', 'Dust-free clean application'],
-    stock: 50,
-    imageUrl: null
-  },
-  {
-    id: 5,
-    name: 'Heavy Resistance Band Set',
-    category: 'accessories',
-    price: 34.99,
-    originalPrice: 44.99,
-    emoji: '🎗️',
-    color: '#181818',
-    badge: 'SALE',
-    rating: 4.9,
-    reviews: 27,
-    description: 'Set of 4 natural latex bands for planche assistance, front lever progressions, and mobility work.',
-    features: ['100% Eco natural latex', 'Color coded resistance levels (15-125 lbs)', 'Carrying bag included'],
-    stock: 30,
-    imageUrl: null
-  }
-]
 
 const FALLBACK_CATEGORIES = ['all', 'parallets', 'apparel', 'accessories']
+
 
 export function useProducts() {
   const [products, setProducts] = useState([])
@@ -103,7 +21,7 @@ export function useProducts() {
 
       if (!supabase) {
         if (!cancelled) {
-          setProducts(FALLBACK_PRODUCTS)
+          setProducts([])
           setCategories(FALLBACK_CATEGORIES)
           setLoading(false)
         }
@@ -118,8 +36,8 @@ export function useProducts() {
 
         if (cancelled) return
 
-        if (productsRes.error || !productsRes.data || productsRes.data.length === 0) {
-          setProducts(FALLBACK_PRODUCTS)
+        if (productsRes.error) {
+          setProducts([])
           setCategories(FALLBACK_CATEGORIES)
           setLoading(false)
           return
@@ -150,7 +68,7 @@ export function useProducts() {
         setLoading(false)
       } catch (err) {
         if (!cancelled) {
-          setProducts(FALLBACK_PRODUCTS)
+          setProducts([])
           setCategories(FALLBACK_CATEGORIES)
           setLoading(false)
         }

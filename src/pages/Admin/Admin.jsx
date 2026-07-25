@@ -93,6 +93,7 @@ function OrderDetailsOverlay({ order, onClose }) {
         background: '#111', border: '1px solid #2a2a2a',
         borderRadius: 16, padding: '28px',
         zIndex: 2001, width: '90%', maxWidth: 520,
+        maxHeight: '88vh', overflowY: 'auto',
         boxShadow: '0 24px 64px rgba(0,0,0,0.8)',
         animation: 'fadeUp 0.25s ease',
       }}>
@@ -130,6 +131,24 @@ function OrderDetailsOverlay({ order, onClose }) {
         <button onClick={onClose} className="btn-primary" style={{ marginTop: 24, width: '100%', justifyContent: 'center' }}>
           Close Details
         </button>
+
+        {/* Payment Proof */}
+        {order.payment_proof_url && (
+          <div style={{ marginTop: 20, borderTop: '1px solid #222', paddingTop: 16 }}>
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: '#f0f0f0', marginBottom: 10 }}>📸 Payment Screenshot</h4>
+            <a href={order.payment_proof_url} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+              <img
+                src={order.payment_proof_url}
+                alt="Payment proof"
+                style={{ width: '100%', maxHeight: 220, objectFit: 'cover', borderRadius: 8, border: '1px solid #2a2a2a', cursor: 'zoom-in' }}
+              />
+              <p style={{ fontSize: 11, color: '#555', marginTop: 6, textAlign: 'center' }}>Click to open full size</p>
+            </a>
+          </div>
+        )}
+        {!order.payment_proof_url && (
+          <p style={{ marginTop: 16, fontSize: 12, color: '#555', borderTop: '1px solid #222', paddingTop: 12 }}>📸 No payment screenshot uploaded</p>
+        )}
       </div>
     </>
   )
@@ -159,6 +178,7 @@ export default function Admin() {
 
   const [toasts, setToasts]             = useState([])
   const [confirmProduct, setConfirmProduct] = useState(null)
+  const [confirmOrder, setConfirmOrder]     = useState(null)
   const [editingProduct, setEditingProduct] = useState(null)
 
   const showToast = (msg, type = 'success') => {
@@ -326,18 +346,22 @@ export default function Admin() {
   }
 
   // Delete order in Supabase
-  const handleDeleteOrder = async (orderId) => {
-    if (window.confirm('Delete this order record permanently?')) {
-      const { error } = await supabase
-        .from('orders')
-        .delete()
-        .eq('id', orderId)
-      if (error) {
-        showToast(error.message, 'error')
-      } else {
-        showToast('Order deleted successfully.')
-        fetchOrders()
-      }
+  const handleDeleteOrder = (orderId) => {
+    setConfirmOrder(orderId)
+  }
+
+  const handleDeleteOrderConfirmed = async () => {
+    const orderId = confirmOrder
+    setConfirmOrder(null)
+    const { error } = await supabase
+      .from('orders')
+      .delete()
+      .eq('id', orderId)
+    if (error) {
+      showToast(error.message, 'error')
+    } else {
+      showToast('Order deleted successfully.')
+      fetchOrders()
     }
   }
 
@@ -380,6 +404,14 @@ export default function Admin() {
         onConfirm={handleDeleteConfirmed}
         onCancel={() => setConfirmProduct(null)}
       />
+      {/* Order delete confirm */}
+      {confirmOrder && (
+        <ConfirmDialog
+          product={{ name: `Order #${confirmOrder}` }}
+          onConfirm={handleDeleteOrderConfirmed}
+          onCancel={() => setConfirmOrder(null)}
+        />
+      )}
       <OrderDetailsOverlay
         order={selectedOrder}
         onClose={() => setSelectedOrder(null)}
