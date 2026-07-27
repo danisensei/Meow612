@@ -1,13 +1,81 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '@/hooks/useProducts'
+import { useReviews } from '@/hooks/useReviews'
+import { useCartCtx } from '@/App'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import './Home.css'
 
+function StarDisplay({ rating }) {
+  return (
+    <span className="comm-stars" aria-label={`${rating} stars`}>
+      {[1, 2, 3, 4, 5].map(s => (
+        <span key={s} style={{ opacity: s <= rating ? 1 : 0.25 }}>★</span>
+      ))}
+    </span>
+  )
+}
 
+function CommunityReviewCard({ review, productName }) {
+  const [lightbox, setLightbox] = React.useState(null)
+  const initials = (review.reviewer_name || 'A')
+    .split(' ')
+    .slice(0, 2)
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
 
+  return (
+    <div className="comm-card">
+      <div className="comm-card__top">
+        <div className="comm-avatar">{initials}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p className="comm-reviewer">{review.reviewer_name || 'Anonymous'}</p>
+          {productName && <p className="comm-product-name">{productName}</p>}
+        </div>
+        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+          <StarDisplay rating={review.rating} />
+          <p className="comm-date">
+            {new Date(review.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </p>
+        </div>
+      </div>
+
+      {review.body && <p className="comm-body">{review.body}</p>}
+
+      {review.image_urls?.length > 0 && (
+        <div className="comm-images">
+          {review.image_urls.map((url, i) => (
+            <img
+              key={i}
+              src={url}
+              alt={`Review photo ${i + 1}`}
+              className="comm-img"
+              onClick={() => setLightbox(url)}
+            />
+          ))}
+        </div>
+      )}
+
+      {lightbox && (
+        <div className="comm-lightbox" onClick={() => setLightbox(null)}>
+          <img src={lightbox} alt="Review photo enlarged" />
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function Home() {
   const { products, loading } = useProducts()
+  const { reviews, loading: reviewsLoading } = useReviews()   // all reviews
+  const { openReview, openProductDetails } = useCartCtx()
+
+  // Build a map of productId → productName for the community cards
+  const productMap = React.useMemo(
+    () => Object.fromEntries(products.map(p => [p.id, p])),
+    [products]
+  )
 
   return (
     <main className="home-page">
@@ -116,7 +184,77 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── COMMUNITY / REVIEWS SECTION ───────────── */}
+      <section className="community-section" id="community">
+        <div className="container">
+          <div className="community-header">
+            <div>
+              <p className="section-label">Community</p>
+              <h2 className="section-title">WHAT ATHLETES <span>SAY</span></h2>
+              <p className="community-sub">
+                Real reviews from real athletes. See what the MEOW612 community is training with.
+              </p>
+            </div>
+          </div>
 
+          {reviewsLoading && (
+            <div className="community-loading">
+              <div className="comm-skeleton" />
+              <div className="comm-skeleton" />
+              <div className="comm-skeleton" />
+            </div>
+          )}
+
+          {!reviewsLoading && reviews.length === 0 && (
+            <div className="community-empty">
+              <span className="community-empty__icon">💬</span>
+              <p className="community-empty__title">No reviews yet</p>
+              <p className="community-empty__sub">
+                Be the first to review a product and help the community!
+              </p>
+              {products.length > 0 && (
+                <button
+                  className="btn-primary community-empty__cta"
+                  onClick={() => openReview(products[0])}
+                  id="community-write-review-btn"
+                >
+                  Write the First Review →
+                </button>
+              )}
+            </div>
+          )}
+
+          {!reviewsLoading && reviews.length > 0 && (
+            <>
+              <div className="community-grid">
+                {reviews.map(r => (
+                  <CommunityReviewCard
+                    key={r.id}
+                    review={r}
+                    productName={productMap[r.product_id]?.name}
+                  />
+                ))}
+              </div>
+
+              {/* CTA row */}
+              <div className="community-cta-row">
+                {products.length > 0 && (
+                  <button
+                    className="btn-outline community-write-btn"
+                    onClick={() => {
+                      // Open product details for the first product — user can pick
+                      openProductDetails(products[0])
+                    }}
+                    id="community-review-cta-btn"
+                  >
+                    ✍ Write a Review
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
 
       {/* ── FOOTER ────────────────────────────────── */}
       <footer className="footer">

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useProducts } from '@/hooks/useProducts'
+import { useReviews } from '@/hooks/useReviews'
 import { supabase } from '@/lib/supabase'
 import './Admin.css'
 
@@ -39,8 +40,8 @@ function AdminToast({ toasts }) {
 }
 
 // ── In-app confirm dialog ──────────────────────────────────────────
-function ConfirmDialog({ product, onConfirm, onCancel }) {
-  if (!product) return null
+function ConfirmDialog({ product, title, message, onConfirm, onCancel }) {
+  if (!product && !title) return null
   return (
     <>
       <div onClick={onCancel} style={{
@@ -57,9 +58,9 @@ function ConfirmDialog({ product, onConfirm, onCancel }) {
         animation: 'fadeUp 0.25s ease',
       }}>
         <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
-        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: '#f0f0f0' }}>Delete Product?</h3>
+        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: '#f0f0f0' }}>{title || 'Delete Product?'}</h3>
         <p style={{ fontSize: 14, color: '#888', marginBottom: 28 }}>
-          "<strong style={{ color: '#f0f0f0' }}>{product.name}</strong>" will be permanently removed from the store.
+          {message || <>"<strong style={{ color: '#f0f0f0' }}>{product?.name}</strong>" will be permanently removed from the store.</>}
         </p>
         <div style={{ display: 'flex', gap: 12 }}>
           <button onClick={onCancel} style={{
@@ -162,6 +163,7 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState('products') // 'products' or 'orders'
 
   const { products, loading, addProduct, removeProduct, updateProduct } = useProducts()
+  const { reviews, loading: reviewsLoading, deleteReview } = useReviews()
 
   // Orders State
   const [orders, setOrders] = useState([])
@@ -171,20 +173,32 @@ export default function Admin() {
   const [formData, setFormData] = useState({
     name: '', category: 'parallets', price: '', description: ''
   })
-  const [imageFile, setImageFile]       = useState(null)
-  const [imagePreview, setImagePreview] = useState(null)
-  const [submitting, setSubmitting]     = useState(false)
+  const [existingImageUrls, setExistingImageUrls] = useState([]) // array of URLs
+  const [newFiles, setNewFiles]                   = useState([]) // array of { id, file, previewUrl }
+  const [submitting, setSubmitting]             = useState(false)
   const fileInputRef = useRef(null)
 
   const [toasts, setToasts]             = useState([])
   const [confirmProduct, setConfirmProduct] = useState(null)
   const [confirmOrder, setConfirmOrder]     = useState(null)
+  const [confirmReview, setConfirmReview]   = useState(null)
   const [editingProduct, setEditingProduct] = useState(null)
 
   const showToast = (msg, type = 'success') => {
     const id = Date.now()
     setToasts(prev => [...prev, { id, msg, type }])
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3500)
+  }
+
+  const handleDeleteReviewConfirmed = async () => {
+    if (!confirmReview) return
+    const res = await deleteReview(confirmReview.id)
+    setConfirmReview(null)
+    if (res.success) {
+      showToast('Review deleted successfully.')
+    } else {
+      showToast(res.error || 'Failed to delete review.', 'error')
+    }
   }
 
   // Fetch orders from Supabase
@@ -221,18 +235,37 @@ export default function Admin() {
   }
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    if (file.size > 5 * 1024 * 1024) {
-      showToast('Image must be under 5 MB.', 'error'); return
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    const validItems = []
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) {
+        showToast(`"${file.name}" exceeds 5 MB limit.`, 'error')
+        continue
+      }
+      validItems.push({
+        id: Math.random().toString(36).substring(2, 9),
+        file,
+        previewUrl: URL.createObjectURL(file)
+      })
     }
-    setImageFile(file)
-    setImagePreview(URL.createObjectURL(file))
+
+    setNewFiles(prev => [...prev, ...validItems])
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  const handleRemoveImage = () => {
-    setImageFile(null)
-    setImagePreview(null)
+  const handleRemoveExistingImage = (index) => {
+    setExistingImageUrls(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleRemoveNewFile = (id) => {
+    setNewFiles(prev => prev.filter(item => item.id !== id))
+  }
+
+  const handleClearAllImages = () => {
+    setExistingImageUrls([])
+    setNewFiles([])
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
@@ -244,34 +277,36 @@ export default function Admin() {
       price: p.price.toString(),
       description: p.description || ''
     })
-    setImagePreview(p.imageUrl)
-    setImageFile(null)
+    const urls = p.imageUrls && p.imageUrls.length > 0 ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : [])
+    setExistingImageUrls(urls)
+    setNewFiles([])
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleCancelEdit = () => {
     setEditingProduct(null)
     setFormData({ name: '', category: 'parallets', price: '', description: '' })
-    handleRemoveImage()
+    handleClearAllImages()
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
 
-    let image_url = editingProduct ? editingProduct.imageUrl : null
-
-    if (imageFile) {
-      const { url, error } = await uploadImage(imageFile)
+    // Upload newly selected files
+    const newlyUploadedUrls = []
+    for (const item of newFiles) {
+      const { url, error } = await uploadImage(item.file)
       if (error) {
         showToast(`Image upload failed: ${error}`, 'error')
         setSubmitting(false)
         return
       }
-      image_url = url
-    } else if (!imagePreview) {
-      image_url = null
+      if (url) newlyUploadedUrls.push(url)
     }
+
+    const finalImageUrls = [...existingImageUrls, ...newlyUploadedUrls]
+    const primaryImageUrl = finalImageUrls.length > 0 ? finalImageUrls[0] : null
 
     if (editingProduct) {
       const result = await updateProduct(editingProduct.id, {
@@ -279,7 +314,8 @@ export default function Admin() {
         category_slug: formData.category,
         price:         parseFloat(formData.price),
         description:   formData.description,
-        image_url,
+        image_url:     primaryImageUrl,
+        image_urls:    finalImageUrls,
       })
       setSubmitting(false)
       if (result.success) {
@@ -298,13 +334,14 @@ export default function Admin() {
         color:        'linear-gradient(135deg, #1a1a2e, #16213e)',
         badge:        null, rating: 5.0, reviews: 0,
         features:     [],
-        image_url,
+        image_url:    primaryImageUrl,
+        image_urls:   finalImageUrls,
       })
       setSubmitting(false)
       if (result.success) {
         showToast(`"${formData.name}" added to store!`)
         setFormData({ name: '', category: 'parallets', price: '', description: '' })
-        handleRemoveImage()
+        handleClearAllImages()
       } else {
         showToast(result.error || 'Failed to add product.', 'error')
       }
@@ -412,6 +449,15 @@ export default function Admin() {
           onCancel={() => setConfirmOrder(null)}
         />
       )}
+      {/* Review delete confirm */}
+      {confirmReview && (
+        <ConfirmDialog
+          title="Delete Review?"
+          message={<>Review by "<strong style={{ color: '#f0f0f0' }}>{confirmReview.reviewer_name || 'Anonymous'}</strong>" will be permanently removed.</>}
+          onConfirm={handleDeleteReviewConfirmed}
+          onCancel={() => setConfirmReview(null)}
+        />
+      )}
       <OrderDetailsOverlay
         order={selectedOrder}
         onClose={() => setSelectedOrder(null)}
@@ -439,6 +485,13 @@ export default function Admin() {
             >
               Orders ({orders.length})
             </button>
+            <button 
+              className={`submit-btn ${activeTab === 'reviews' ? '' : 'btn-outline'}`}
+              style={{ width: 'auto', padding: '8px 20px', fontSize: 12, border: activeTab === 'reviews' ? 'none' : '1px solid transparent' }}
+              onClick={() => setActiveTab('reviews')}
+            >
+              Reviews ({reviews.length})
+            </button>
           </div>
 
           <button className="logout-btn" onClick={() => setIsAuthenticated(false)}>Lock Session</button>
@@ -451,29 +504,91 @@ export default function Admin() {
               <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
               <form onSubmit={handleSubmit}>
 
-                {/* Image upload */}
+                {/* Product Images (Multiple) */}
                 <div className="form-group">
-                  <label>Product Image <span style={{ color: '#555', fontWeight: 400 }}>(optional)</span></label>
-                  {imagePreview ? (
-                    <div className="admin-img-preview">
-                      <img src={imagePreview} alt="Preview" />
-                      <button type="button" className="admin-img-remove" onClick={handleRemoveImage}>✕ Remove</button>
+                  <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Product Images <span style={{ color: '#666', fontWeight: 400 }}>(Multiple allowed)</span></span>
+                    {(existingImageUrls.length > 0 || newFiles.length > 0) && (
+                      <span style={{ fontSize: 11, color: 'var(--accent-primary)', fontWeight: 600 }}>
+                        {existingImageUrls.length + newFiles.length} photo{(existingImageUrls.length + newFiles.length) !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </label>
+
+                  {(existingImageUrls.length > 0 || newFiles.length > 0) ? (
+                    <div className="admin-img-grid-container">
+                      <div className="admin-img-grid">
+                        {/* Existing images */}
+                        {existingImageUrls.map((url, idx) => (
+                          <div key={`existing-${idx}`} className="admin-img-card">
+                            <img src={url} alt={`Product photo ${idx + 1}`} />
+                            {idx === 0 && <span className="admin-img-badge">Primary</span>}
+                            <button
+                              type="button"
+                              className="admin-img-card-remove"
+                              onClick={() => handleRemoveExistingImage(idx)}
+                              title="Remove image"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+
+                        {/* New files to be uploaded */}
+                        {newFiles.map((item, idx) => {
+                          const isFirst = existingImageUrls.length === 0 && idx === 0
+                          return (
+                            <div key={`new-${item.id}`} className="admin-img-card">
+                              <img src={item.previewUrl} alt="New upload preview" />
+                              {isFirst && <span className="admin-img-badge">Primary</span>}
+                              <button
+                                type="button"
+                                className="admin-img-card-remove"
+                                onClick={() => handleRemoveNewFile(item.id)}
+                                title="Remove image"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          )
+                        })}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+                        <button
+                          type="button"
+                          className="btn-outline"
+                          style={{ flex: 1, padding: '8px 12px', fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          📷 Add More Photos
+                        </button>
+                        <button
+                          type="button"
+                          style={{ background: 'transparent', border: '1px solid #442222', color: '#ff6b6b', borderRadius: 8, padding: '8px 12px', fontSize: 11, cursor: 'pointer' }}
+                          onClick={handleClearAllImages}
+                        >
+                          Clear All
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <label className="admin-img-upload" htmlFor="admin-img-input">
                       <span className="admin-img-upload-icon">📷</span>
-                      <span>Click to upload</span>
-                      <span style={{ fontSize: 11, color: '#555' }}>JPG, PNG, WEBP · max 5 MB</span>
-                      <input
-                        id="admin-img-input"
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp,image/gif"
-                        onChange={handleImageChange}
-                        style={{ display: 'none' }}
-                      />
+                      <span>Click to select product photos</span>
+                      <span style={{ fontSize: 11, color: '#555' }}>Select 1 or more images · Max 5 MB each</span>
                     </label>
                   )}
+
+                  <input
+                    id="admin-img-input"
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                  />
                 </div>
 
                 <div className="form-group">
@@ -575,7 +690,7 @@ export default function Admin() {
               </div>
             </section>
           </div>
-        ) : (
+        ) : activeTab === 'orders' ? (
           /* ── Orders Table Tab ────────────────────────────────── */
           <section className="products-list-panel" style={{ width: '100%' }}>
             <div className="products-table-container">
@@ -640,6 +755,89 @@ export default function Admin() {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ) : (
+          /* ── Reviews Table Tab ────────────────────────────────── */
+          <section className="products-list-panel" style={{ width: '100%' }}>
+            <div className="products-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Product</th>
+                    <th>Reviewer</th>
+                    <th>Rating</th>
+                    <th>Review Comment</th>
+                    <th>Photos</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reviewsLoading ? (
+                    <tr><td colSpan="8" style={{ textAlign: 'center', color: '#666', padding: 32 }}>Loading reviews...</td></tr>
+                  ) : reviews.length === 0 ? (
+                    <tr><td colSpan="8" style={{ textAlign: 'center', color: '#666', padding: 32 }}>No customer reviews yet.</td></tr>
+                  ) : reviews.map(rev => {
+                    const product = products.find(p => p.id === rev.product_id)
+                    return (
+                      <tr key={rev.id}>
+                        <td><span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>#{rev.id}</span></td>
+                        <td>
+                          <div>
+                            <p style={{ fontWeight: 600, color: '#f0f0f0' }}>{product ? product.name : `Product #${rev.product_id}`}</p>
+                            <p style={{ fontSize: '0.8rem', color: '#666', textTransform: 'uppercase' }}>{product?.category || ''}</p>
+                          </div>
+                        </td>
+                        <td>
+                          <p style={{ fontWeight: 600, color: '#f0f0f0' }}>{rev.reviewer_name || 'Anonymous'}</p>
+                        </td>
+                        <td>
+                          <span style={{ color: '#ffc107', letterSpacing: 1, fontWeight: 700 }}>
+                            {'★'.repeat(rev.rating)}{'☆'.repeat(5 - rev.rating)} ({rev.rating}/5)
+                          </span>
+                        </td>
+                        <td style={{ maxWidth: 280 }}>
+                          <p style={{ fontSize: '0.85rem', color: '#ccc', lineHeight: 1.4, whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                            {rev.body || <em style={{ color: '#666' }}>No text comment</em>}
+                          </p>
+                        </td>
+                        <td>
+                          {rev.image_urls && rev.image_urls.length > 0 ? (
+                            <div style={{ display: 'flex', gap: 4 }}>
+                              {rev.image_urls.map((imgUrl, idx) => (
+                                <a key={idx} href={imgUrl} target="_blank" rel="noopener noreferrer">
+                                  <img
+                                    src={imgUrl}
+                                    alt="Review photo"
+                                    style={{ width: 34, height: 34, objectFit: 'cover', borderRadius: 4, border: '1px solid #333' }}
+                                  />
+                                </a>
+                              ))}
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: '0.8rem', color: '#555' }}>No photos</span>
+                          )}
+                        </td>
+                        <td style={{ fontSize: '0.85rem', color: '#aaa', whiteSpace: 'nowrap' }}>
+                          {new Date(rev.created_at).toLocaleDateString()}
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button
+                              className="action-btn btn-delete"
+                              onClick={() => setConfirmReview(rev)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

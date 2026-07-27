@@ -43,22 +43,29 @@ export function useProducts() {
           return
         }
 
-        const normalised = productsRes.data.map((p) => ({
-          id: p.id,
-          name: p.name,
-          category: p.category_slug ?? p.category ?? 'parallets',
-          price: Number(p.price),
-          originalPrice: p.original_price ? Number(p.original_price) : null,
-          emoji: p.emoji ?? '🏋️',
-          color: p.color ?? '#111111',
-          badge: p.badge,
-          rating: Number(p.rating ?? 5.0),
-          reviews: p.reviews ?? 10,
-          description: p.description,
-          features: p.features ?? [],
-          stock: p.stock ?? 10,
-          imageUrl: p.image_url ?? null,
-        }))
+        const normalised = productsRes.data.map((p) => {
+          const urls = Array.isArray(p.image_urls) && p.image_urls.length > 0
+            ? p.image_urls
+            : (p.image_url ? [p.image_url] : [])
+
+          return {
+            id: p.id,
+            name: p.name,
+            category: p.category_slug ?? p.category ?? 'parallets',
+            price: Number(p.price),
+            originalPrice: p.original_price ? Number(p.original_price) : null,
+            emoji: p.emoji ?? '🏋️',
+            color: p.color ?? '#111111',
+            badge: p.badge,
+            rating: Number(p.rating ?? 5.0),
+            reviews: p.reviews ?? 10,
+            description: p.description,
+            features: p.features ?? [],
+            stock: p.stock ?? 10,
+            imageUrl: urls[0] || p.image_url || null,
+            imageUrls: urls,
+          }
+        })
 
         const catsFromRes = (categoriesRes.data ?? []).map((c) => c.slug)
         const cats = ['all', ...new Set([...catsFromRes, 'parallets', 'apparel', 'accessories'])]
@@ -128,5 +135,15 @@ export function useProducts() {
     return data.publicUrl
   }
 
-  return { products, categories, loading, error, addProduct, removeProduct, updateProduct, refetch, uploadProductImage }
+  const uploadProductImages = async (files) => {
+    if (!supabase || !files || files.length === 0) return []
+    const urls = []
+    for (const file of files) {
+      const url = await uploadProductImage(file)
+      if (url) urls.push(url)
+    }
+    return urls
+  }
+
+  return { products, categories, loading, error, addProduct, removeProduct, updateProduct, refetch, uploadProductImage, uploadProductImages }
 }
