@@ -99,7 +99,7 @@ function OrderDetailsOverlay({ order, onClose }) {
         animation: 'fadeUp 0.25s ease',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f0f0f0' }}>Order #{order.id} Details</h3>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f0f0f0' }}>Order #{order.displayId ?? order.id} Details</h3>
           <button onClick={onClose} style={{
             background: 'transparent', border: 'none', color: '#888',
             fontSize: 18, cursor: 'pointer'
