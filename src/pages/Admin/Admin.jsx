@@ -9,7 +9,7 @@ const BUCKET = 'product-images'
 
 // ── Upload helper ──────────────────────────────────────────────────
 async function uploadImage(file) {
-  const ext  = file.name.split('.').pop()
+  const ext = file.name.split('.').pop()
   const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: false })
   if (error) return { url: null, error: error.message }
@@ -158,7 +158,7 @@ function OrderDetailsOverlay({ order, onClose }) {
 // ── Main Admin component ───────────────────────────────────────────
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [passcode, setPasscode]   = useState('')
+  const [passcode, setPasscode] = useState('')
   const [passError, setPassError] = useState(false)
   const [activeTab, setActiveTab] = useState('products') // 'products' or 'orders'
 
@@ -174,14 +174,14 @@ export default function Admin() {
     name: '', category: 'parallets', price: '', description: '', stock: '10', isOutOfStock: false
   })
   const [existingImageUrls, setExistingImageUrls] = useState([]) // array of URLs
-  const [newFiles, setNewFiles]                   = useState([]) // array of { id, file, previewUrl }
-  const [submitting, setSubmitting]             = useState(false)
+  const [newFiles, setNewFiles] = useState([]) // array of { id, file, previewUrl }
+  const [submitting, setSubmitting] = useState(false)
   const fileInputRef = useRef(null)
 
-  const [toasts, setToasts]             = useState([])
+  const [toasts, setToasts] = useState([])
   const [confirmProduct, setConfirmProduct] = useState(null)
-  const [confirmOrder, setConfirmOrder]     = useState(null)
-  const [confirmReview, setConfirmReview]   = useState(null)
+  const [confirmOrder, setConfirmOrder] = useState(null)
+  const [confirmReview, setConfirmReview] = useState(null)
   const [editingProduct, setEditingProduct] = useState(null)
 
   const showToast = (msg, type = 'success') => {
@@ -312,14 +312,14 @@ export default function Admin() {
 
     if (editingProduct) {
       const result = await updateProduct(editingProduct.id, {
-        name:          formData.name,
+        name: formData.name,
         category_slug: formData.category,
-        price:         parseFloat(formData.price),
-        description:   formData.description,
-        stock:         parseInt(formData.stock, 10) || 0,
+        price: parseFloat(formData.price),
+        description: formData.description,
+        stock: parseInt(formData.stock, 10) || 0,
         is_out_of_stock: Boolean(formData.isOutOfStock),
-        image_url:     primaryImageUrl,
-        image_urls:    finalImageUrls,
+        image_url: primaryImageUrl,
+        image_urls: finalImageUrls,
       })
       setSubmitting(false)
       if (result.success) {
@@ -330,18 +330,18 @@ export default function Admin() {
       }
     } else {
       const result = await addProduct({
-        name:         formData.name,
+        name: formData.name,
         category_slug: formData.category,
-        price:        parseFloat(formData.price),
-        emoji:        '📦',
-        description:  formData.description,
-        color:        'linear-gradient(135deg, #1a1a2e, #16213e)',
-        badge:        null, rating: 5.0, reviews: 0,
-        features:     [],
-        stock:        parseInt(formData.stock, 10) || 0,
+        price: parseFloat(formData.price),
+        emoji: '📦',
+        description: formData.description,
+        color: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+        badge: null, rating: 5.0, reviews: 0,
+        features: [],
+        stock: parseInt(formData.stock, 10) || 0,
         is_out_of_stock: Boolean(formData.isOutOfStock),
-        image_url:    primaryImageUrl,
-        image_urls:   finalImageUrls,
+        image_url: primaryImageUrl,
+        image_urls: finalImageUrls,
       })
       setSubmitting(false)
       if (result.success) {
@@ -369,9 +369,9 @@ export default function Admin() {
   const handleToggleSale = async (product) => {
     const isSale = product.badge === 'Sale'
     const updates = {
-      badge:          isSale ? null : 'Sale',
+      badge: isSale ? null : 'Sale',
       original_price: isSale ? null : product.price,
-      price:          isSale ? (product.originalPrice || product.price) : (product.price * 0.8).toFixed(2),
+      price: isSale ? (product.originalPrice || product.price) : (product.price * 0.8).toFixed(2),
     }
     const result = await updateProduct(product.id, updates)
     if (result.success) showToast(isSale ? `Sale removed from "${product.name}"` : `"${product.name}" put on sale!`)
@@ -487,22 +487,22 @@ export default function Admin() {
             <h1 className="admin-title">Admin <span>Command Center</span></h1>
             <button className="logout-btn" onClick={() => setIsAuthenticated(false)}>Lock Session</button>
           </div>
-          
+
           {/* Navigation Tabs */}
           <nav className="admin-nav-tabs" aria-label="Admin Sections">
-            <button 
+            <button
               className={`admin-tab-btn ${activeTab === 'products' ? 'active' : ''}`}
               onClick={() => setActiveTab('products')}
             >
               Products
             </button>
-            <button 
+            <button
               className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
               onClick={() => setActiveTab('orders')}
             >
               Orders ({orders.length})
             </button>
-            <button 
+            <button
               className={`admin-tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
               onClick={() => setActiveTab('reviews')}
             >
@@ -627,10 +627,10 @@ export default function Admin() {
                 </div>
                 <div className="form-group">
                   <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', margin: '12px 0', userSelect: 'none' }}>
-                    <input 
-                      type="checkbox" 
-                      name="isOutOfStock" 
-                      checked={formData.isOutOfStock} 
+                    <input
+                      type="checkbox"
+                      name="isOutOfStock"
+                      checked={formData.isOutOfStock}
                       onChange={e => setFormData(prev => ({ ...prev, isOutOfStock: e.target.checked }))}
                       style={{ width: 18, height: 18, accentColor: '#ff4444', cursor: 'pointer' }}
                     />
@@ -716,8 +716,8 @@ export default function Admin() {
                             <button className="action-btn btn-edit" onClick={() => handleEditClick(p)}>
                               Edit
                             </button>
-                            <button 
-                              className={`action-btn ${p.isOutOfStock ? 'btn-instock' : 'btn-outofstock'}`} 
+                            <button
+                              className={`action-btn ${p.isOutOfStock ? 'btn-instock' : 'btn-outofstock'}`}
                               onClick={() => handleToggleOutOfStock(p)}
                               title="Toggle out of stock status"
                             >
@@ -786,15 +786,15 @@ export default function Admin() {
                       </td>
                       <td>
                         <div className="action-buttons">
-                          <button 
-                            className="action-btn btn-edit" 
+                          <button
+                            className="action-btn btn-edit"
                             style={{ background: '#333', color: '#fff' }}
                             onClick={() => setSelectedOrder(order)}
                           >
                             View Items
                           </button>
-                          <button 
-                            className="action-btn btn-delete" 
+                          <button
+                            className="action-btn btn-delete"
                             onClick={() => handleDeleteOrder(order.id)}
                           >
                             Delete
