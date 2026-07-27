@@ -401,12 +401,13 @@ export default function Admin() {
   }
 
   // Delete order in Supabase
-  const handleDeleteOrder = (orderId) => {
-    setConfirmOrder(orderId)
+  const handleDeleteOrder = (order) => {
+    setConfirmOrder(order)
   }
 
   const handleDeleteOrderConfirmed = async () => {
-    const orderId = confirmOrder
+    if (!confirmOrder) return
+    const orderId = typeof confirmOrder === 'object' ? confirmOrder.id : confirmOrder
     setConfirmOrder(null)
     const { error } = await supabase
       .from('orders')
@@ -462,7 +463,7 @@ export default function Admin() {
       {/* Order delete confirm */}
       {confirmOrder && (
         <ConfirmDialog
-          product={{ name: `Order #${confirmOrder}` }}
+          product={{ name: `Order #${typeof confirmOrder === 'object' ? (confirmOrder.displayId ?? confirmOrder.id) : confirmOrder}` }}
           onConfirm={handleDeleteOrderConfirmed}
           onCancel={() => setConfirmOrder(null)}
         />
@@ -758,51 +759,54 @@ export default function Admin() {
                     <tr><td colSpan="6" style={{ textAlign: 'center', color: '#666', padding: 32 }}>Loading orders...</td></tr>
                   ) : orders.length === 0 ? (
                     <tr><td colSpan="6" style={{ textAlign: 'center', color: '#666', padding: 32 }}>No orders placed yet.</td></tr>
-                  ) : orders.map(order => (
-                    <tr key={order.id}>
-                      <td><span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>#{order.id}</span></td>
-                      <td>
-                        <div>
-                          <p style={{ fontWeight: 600, color: '#f0f0f0' }}>{order.customer_name}</p>
-                          <p style={{ fontSize: '0.8rem', color: '#666' }}>{order.customer_email}</p>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: '0.85rem', color: '#aaa' }}>{new Date(order.created_at).toLocaleDateString()}</td>
-                      <td style={{ fontWeight: 700, color: '#f0f0f0' }}>PKR {Number(order.total_price).toFixed(2)}</td>
-                      <td>
-                        <select
-                          value={order.status}
-                          onChange={e => handleUpdateOrderStatus(order.id, e.target.value)}
-                          style={{
-                            background: '#161616', border: '1px solid #333', color: '#fff',
-                            padding: '6px 10px', borderRadius: 6, fontSize: '0.8rem', outline: 'none', cursor: 'pointer'
-                          }}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Completed">Completed</option>
-                          <option value="Cancelled">Cancelled</option>
-                        </select>
-                      </td>
-                      <td>
-                        <div className="action-buttons">
-                          <button
-                            className="action-btn btn-edit"
-                            style={{ background: '#333', color: '#fff' }}
-                            onClick={() => setSelectedOrder(order)}
+                  ) : orders.map((order, index) => {
+                    const displayId = orders.length - index
+                    return (
+                      <tr key={order.id}>
+                        <td><span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>#{displayId}</span></td>
+                        <td>
+                          <div>
+                            <p style={{ fontWeight: 600, color: '#f0f0f0' }}>{order.customer_name}</p>
+                            <p style={{ fontSize: '0.8rem', color: '#666' }}>{order.customer_email}</p>
+                          </div>
+                        </td>
+                        <td style={{ fontSize: '0.85rem', color: '#aaa' }}>{new Date(order.created_at).toLocaleDateString()}</td>
+                        <td style={{ fontWeight: 700, color: '#f0f0f0' }}>PKR {Number(order.total_price).toFixed(2)}</td>
+                        <td>
+                          <select
+                            value={order.status}
+                            onChange={e => handleUpdateOrderStatus(order.id, e.target.value)}
+                            style={{
+                              background: '#161616', border: '1px solid #333', color: '#fff',
+                              padding: '6px 10px', borderRadius: 6, fontSize: '0.8rem', outline: 'none', cursor: 'pointer'
+                            }}
                           >
-                            View Items
-                          </button>
-                          <button
-                            className="action-btn btn-delete"
-                            onClick={() => handleDeleteOrder(order.id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            <option value="Pending">Pending</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button
+                              className="action-btn btn-edit"
+                              style={{ background: '#333', color: '#fff' }}
+                              onClick={() => setSelectedOrder({ ...order, displayId })}
+                            >
+                              View Items
+                            </button>
+                            <button
+                              className="action-btn btn-delete"
+                              onClick={() => handleDeleteOrder({ ...order, displayId })}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
