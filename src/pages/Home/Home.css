@@ -706,6 +706,9 @@
   flex-direction: column;
   gap: 14px;
   transition: var(--transition);
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .comm-card:hover {
@@ -718,6 +721,8 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .comm-avatar {
@@ -912,5 +917,8 @@
   }
   .community-section {
     padding: 60px 0;
+  }
+  .comm-card {
+    padding: 16px;
   }
 }
