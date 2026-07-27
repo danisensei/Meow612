@@ -48,6 +48,9 @@ export function useProducts() {
             ? p.image_urls
             : (p.image_url ? [p.image_url] : [])
 
+          const stockNum = p.stock !== null && p.stock !== undefined ? Number(p.stock) : 10
+          const outOfStock = Boolean(p.is_out_of_stock) || stockNum <= 0
+
           return {
             id: p.id,
             name: p.name,
@@ -61,7 +64,9 @@ export function useProducts() {
             reviews: p.reviews ?? 10,
             description: p.description,
             features: p.features ?? [],
-            stock: p.stock ?? 10,
+            stock: stockNum,
+            isOutOfStock: outOfStock,
+            is_out_of_stock: outOfStock,
             imageUrl: urls[0] || p.image_url || null,
             imageUrls: urls,
           }

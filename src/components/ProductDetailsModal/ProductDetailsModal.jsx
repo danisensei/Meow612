@@ -79,6 +79,8 @@ export default function ProductDetailsModal({ product, onClose, onWriteReview })
 
   if (!product) return null
 
+  const isOutOfStock = Boolean(product?.isOutOfStock || product?.is_out_of_stock || (product?.stock !== null && product?.stock !== undefined && Number(product.stock) <= 0))
+
   const handlePrevImg = (e) => {
     e?.stopPropagation()
     setActiveImgIdx(prev => (prev - 1 + images.length) % images.length)
@@ -90,6 +92,7 @@ export default function ProductDetailsModal({ product, onClose, onWriteReview })
   }
 
   const handleAdd = () => {
+    if (isOutOfStock) return
     for (let i = 0; i < qty; i++) {
       addToCart(product)
     }
@@ -184,6 +187,11 @@ export default function ProductDetailsModal({ product, onClose, onWriteReview })
 
           {/* Info panel */}
           <div className="p-details-info">
+            {isOutOfStock && (
+              <span style={{ display: 'inline-block', background: '#dc2626', color: '#ffffff', fontSize: 10, fontWeight: 900, padding: '4px 10px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 8, width: 'fit-content' }}>
+                🚫 Out of Stock
+              </span>
+            )}
             <p className="p-details-cat">{product.category}</p>
             <h2 className="p-details-title">{product.name}</h2>
 
@@ -216,29 +224,23 @@ export default function ProductDetailsModal({ product, onClose, onWriteReview })
 
             {/* Actions */}
             <div className="p-details-actions">
-              <div className="p-details-qty">
-                <button onClick={() => setQty(q => Math.max(1, q - 1))} className="qty-btn">−</button>
-                <span className="qty-val">{qty}</span>
-                <button onClick={() => setQty(q => q + 1)} className="qty-btn">+</button>
-              </div>
+              {!isOutOfStock && (
+                <div className="p-details-qty">
+                  <button onClick={() => setQty(q => Math.max(1, q - 1))} className="qty-btn">−</button>
+                  <span className="qty-val">{qty}</span>
+                  <button onClick={() => setQty(q => q + 1)} className="qty-btn">+</button>
+                </div>
+              )}
 
               <button
                 className={`btn-primary p-details-add-btn ${added ? 'added' : ''}`}
                 onClick={handleAdd}
-                disabled={added}
+                disabled={added || isOutOfStock}
+                style={isOutOfStock ? { background: '#1c1c1c', color: '#777', borderColor: '#333', cursor: 'not-allowed', width: '100%', justifyContent: 'center' } : {}}
               >
-                {added ? '✓ Added' : `Add to Cart • PKR ${(product.price * qty).toFixed(2)}`}
+                {isOutOfStock ? 'Currently Out of Stock' : (added ? '✓ Added' : `Add to Cart • PKR ${(product.price * qty).toFixed(2)}`)}
               </button>
             </div>
-
-            {/* Write a Review button */}
-            <button
-              className="p-details-review-btn"
-              onClick={() => onWriteReview(product)}
-              id={`write-review-${product.id}`}
-            >
-              ✍ Write a Review
-            </button>
           </div>
         </div>
 
@@ -257,6 +259,7 @@ export default function ProductDetailsModal({ product, onClose, onWriteReview })
             <button
               className="p-details-review-btn p-details-review-btn--sm"
               onClick={() => onWriteReview(product)}
+              id={`write-review-${product.id}`}
             >
               ✍ Write a Review
             </button>

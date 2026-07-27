@@ -171,7 +171,7 @@ export default function Admin() {
   const [selectedOrder, setSelectedOrder] = useState(null)
 
   const [formData, setFormData] = useState({
-    name: '', category: 'parallets', price: '', description: ''
+    name: '', category: 'parallets', price: '', description: '', stock: '10', isOutOfStock: false
   })
   const [existingImageUrls, setExistingImageUrls] = useState([]) // array of URLs
   const [newFiles, setNewFiles]                   = useState([]) // array of { id, file, previewUrl }
@@ -275,7 +275,9 @@ export default function Admin() {
       name: p.name,
       category: p.category,
       price: p.price.toString(),
-      description: p.description || ''
+      description: p.description || '',
+      stock: (p.stock ?? 10).toString(),
+      isOutOfStock: Boolean(p.isOutOfStock || p.is_out_of_stock)
     })
     const urls = p.imageUrls && p.imageUrls.length > 0 ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : [])
     setExistingImageUrls(urls)
@@ -285,7 +287,7 @@ export default function Admin() {
 
   const handleCancelEdit = () => {
     setEditingProduct(null)
-    setFormData({ name: '', category: 'parallets', price: '', description: '' })
+    setFormData({ name: '', category: 'parallets', price: '', description: '', stock: '10', isOutOfStock: false })
     handleClearAllImages()
   }
 
@@ -314,6 +316,8 @@ export default function Admin() {
         category_slug: formData.category,
         price:         parseFloat(formData.price),
         description:   formData.description,
+        stock:         parseInt(formData.stock, 10) || 0,
+        is_out_of_stock: Boolean(formData.isOutOfStock),
         image_url:     primaryImageUrl,
         image_urls:    finalImageUrls,
       })
@@ -334,17 +338,31 @@ export default function Admin() {
         color:        'linear-gradient(135deg, #1a1a2e, #16213e)',
         badge:        null, rating: 5.0, reviews: 0,
         features:     [],
+        stock:        parseInt(formData.stock, 10) || 0,
+        is_out_of_stock: Boolean(formData.isOutOfStock),
         image_url:    primaryImageUrl,
         image_urls:   finalImageUrls,
       })
       setSubmitting(false)
       if (result.success) {
         showToast(`"${formData.name}" added to store!`)
-        setFormData({ name: '', category: 'parallets', price: '', description: '' })
+        setFormData({ name: '', category: 'parallets', price: '', description: '', stock: '10', isOutOfStock: false })
         handleClearAllImages()
       } else {
         showToast(result.error || 'Failed to add product.', 'error')
       }
+    }
+  }
+
+  const handleToggleOutOfStock = async (product) => {
+    const nextVal = !product.isOutOfStock
+    const result = await updateProduct(product.id, {
+      is_out_of_stock: nextVal
+    })
+    if (result.success) {
+      showToast(nextVal ? `"${product.name}" marked as Out of Stock.` : `"${product.name}" marked as In Stock.`)
+    } else {
+      showToast(result.error || 'Failed to update stock status.', 'error')
     }
   }
 
@@ -464,37 +482,33 @@ export default function Admin() {
       />
 
       <div className="admin-dashboard">
-        <header className="admin-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
-          <div>
-            <h1>Admin <span>Command Center</span></h1>
+        <header className="admin-header">
+          <div className="admin-header-top">
+            <h1 className="admin-title">Admin <span>Command Center</span></h1>
+            <button className="logout-btn" onClick={() => setIsAuthenticated(false)}>Lock Session</button>
           </div>
           
           {/* Navigation Tabs */}
-          <div style={{ display: 'flex', gap: 12, background: 'rgba(255,255,255,0.03)', padding: 6, borderRadius: 10, border: '1px solid var(--border-subtle)' }}>
+          <nav className="admin-nav-tabs" aria-label="Admin Sections">
             <button 
-              className={`submit-btn ${activeTab === 'products' ? '' : 'btn-outline'}`}
-              style={{ width: 'auto', padding: '8px 20px', fontSize: 12, border: activeTab === 'products' ? 'none' : '1px solid transparent' }}
+              className={`admin-tab-btn ${activeTab === 'products' ? 'active' : ''}`}
               onClick={() => setActiveTab('products')}
             >
               Products
             </button>
             <button 
-              className={`submit-btn ${activeTab === 'orders' ? '' : 'btn-outline'}`}
-              style={{ width: 'auto', padding: '8px 20px', fontSize: 12, border: activeTab === 'orders' ? 'none' : '1px solid transparent' }}
+              className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
               onClick={() => setActiveTab('orders')}
             >
               Orders ({orders.length})
             </button>
             <button 
-              className={`submit-btn ${activeTab === 'reviews' ? '' : 'btn-outline'}`}
-              style={{ width: 'auto', padding: '8px 20px', fontSize: 12, border: activeTab === 'reviews' ? 'none' : '1px solid transparent' }}
+              className={`admin-tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
               onClick={() => setActiveTab('reviews')}
             >
               Reviews ({reviews.length})
             </button>
-          </div>
-
-          <button className="logout-btn" onClick={() => setIsAuthenticated(false)}>Lock Session</button>
+          </nav>
         </header>
 
         {activeTab === 'products' ? (
@@ -608,6 +622,24 @@ export default function Admin() {
                   <input required type="number" step="0.01" min="0.01" name="price" value={formData.price} onChange={handleInputChange} placeholder="29.99" />
                 </div>
                 <div className="form-group">
+                  <label>Stock Quantity</label>
+                  <input required type="number" min="0" step="1" name="stock" value={formData.stock} onChange={handleInputChange} placeholder="e.g. 50" />
+                </div>
+                <div className="form-group">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', margin: '12px 0', userSelect: 'none' }}>
+                    <input 
+                      type="checkbox" 
+                      name="isOutOfStock" 
+                      checked={formData.isOutOfStock} 
+                      onChange={e => setFormData(prev => ({ ...prev, isOutOfStock: e.target.checked }))}
+                      style={{ width: 18, height: 18, accentColor: '#ff4444', cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: 13, fontWeight: 600, color: formData.isOutOfStock ? '#ff6b6b' : '#aaa' }}>
+                      🚫 Mark as Out of Stock
+                    </span>
+                  </label>
+                </div>
+                <div className="form-group">
                   <label>Description</label>
                   <textarea required rows="3" name="description" value={formData.description} onChange={handleInputChange} placeholder="Brief product description..." />
                 </div>
@@ -669,11 +701,27 @@ export default function Admin() {
                             </span>
                           )}
                         </td>
-                        <td>{p.stock ?? '∞'}</td>
+                        <td>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{p.stock ?? 0} units</span>
+                            {p.isOutOfStock ? (
+                              <span className="badge-out-of-stock">OUT OF STOCK</span>
+                            ) : (
+                              <span style={{ fontSize: 11, color: '#4cd137', fontWeight: 600 }}>In Stock</span>
+                            )}
+                          </div>
+                        </td>
                         <td>
                           <div className="action-buttons">
                             <button className="action-btn btn-edit" onClick={() => handleEditClick(p)}>
                               Edit
+                            </button>
+                            <button 
+                              className={`action-btn ${p.isOutOfStock ? 'btn-instock' : 'btn-outofstock'}`} 
+                              onClick={() => handleToggleOutOfStock(p)}
+                              title="Toggle out of stock status"
+                            >
+                              {p.isOutOfStock ? 'In Stock' : 'Out of Stock'}
                             </button>
                             <button className="action-btn btn-sale" onClick={() => handleToggleSale(p)}>
                               {p.badge === 'Sale' ? 'Remove Sale' : 'Put on Sale'}

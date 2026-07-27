@@ -45,6 +45,32 @@
   color: #fff;
 }
 
+.product-card__badge--out-of-stock {
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 900;
+}
+
+.product-card--out-of-stock {
+  opacity: 0.9;
+}
+
+.product-card__btn--out-of-stock {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #888888 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.product-card__btn--out-of-stock:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #888888 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 /* Image area */
 .product-card__img {
   position: relative;
