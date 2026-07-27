@@ -36,14 +36,6 @@ export default function BottomNav({ onCartOpen, cartCount }) {
         <span>Shop</span>
       </Link>
 
-      <a 
-        href="/#community" 
-        className="bottom-nav__item"
-      >
-        <span className="material-symbols-outlined bottom-nav__icon">forum</span>
-        <span>Social</span>
-      </a>
-
       <button 
         onClick={onCartOpen || cartCtx?.openCart} 
         className="bottom-nav__item"

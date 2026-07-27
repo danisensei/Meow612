@@ -647,6 +647,10 @@
     scroll-snap-align: center;
   }
 
+  .footer {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 40px);
+  }
+
   .footer__inner {
     flex-direction: column;
     gap: 24px;

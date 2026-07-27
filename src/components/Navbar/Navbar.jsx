@@ -69,11 +69,6 @@ export default function Navbar({ cartCount, onCartOpen }) {
                 Shop
               </NavLink>
             </li>
-            <li>
-              <a href="/#community" className="top-header__nav-link">
-                Community
-              </a>
-            </li>
           </ul>
         </nav>
 
@@ -142,15 +137,6 @@ export default function Navbar({ cartCount, onCartOpen }) {
               >
                 Shop
               </Link>
-            </li>
-            <li>
-              <a 
-                href="/#community" 
-                className="nav-drawer__link"
-                onClick={() => setDrawerOpen(false)}
-              >
-                Community
-              </a>
             </li>
           </ul>
         </nav>
