@@ -204,23 +204,6 @@ export default function ProductDetailsModal({ product, onClose, onWriteReview })
 
             <p className="p-details-desc">{product.description || 'No description provided.'}</p>
 
-            {/* Premium Badges */}
-            <div className="p-details-badges">
-              <div className="p-badge">
-                <span className="p-badge-icon">🛡️</span>
-                <div>
-                  <p className="p-badge-title">2 Year Warranty</p>
-                  <p className="p-badge-sub">Built to last</p>
-                </div>
-              </div>
-              <div className="p-badge">
-                <span className="p-badge-icon">🚚</span>
-                <div>
-                  <p className="p-badge-title">Free Shipping</p>
-                  <p className="p-badge-sub">Worldwide delivery</p>
-                </div>
-              </div>
-            </div>
 
             {/* Actions */}
             <div className="p-details-actions">
